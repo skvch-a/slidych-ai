@@ -135,7 +135,7 @@ class ImageGenerationService:
 
         pipelines = await async_client.get_pipelines_by_type(PipelineType.TEXT2IMAGE)
         text2image_pipeline = pipelines[0]  # Using the first available pipeline
-        print(f"Using pipeline: {text2image_pipeline.name}")
+        # print(f"Using pipeline: {text2image_pipeline.name}")
 
         run_result = await async_client.run_pipeline(
             pipeline_id=text2image_pipeline.id,
@@ -145,7 +145,7 @@ class ImageGenerationService:
         )
 
         uuid = run_result.uuid
-        print(f"Task started with UUID: {run_result.uuid}")
+        # print(f"Task started with UUID: {run_result.uuid}")
         final_status = await async_client.wait_for_completion(
             request_id=run_result.uuid,
             initial_delay=run_result.status_time
