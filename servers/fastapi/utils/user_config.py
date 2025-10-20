@@ -45,6 +45,7 @@ from utils.set_env import (
     set_pixabay_api_key_env,
     set_tool_calls_env,
     set_web_grounding_env,
+    set_kandinsky_api_key_env,
 )
 
 
@@ -141,3 +142,5 @@ def update_env_with_user_config():
         set_extended_reasoning_env(str(user_config.EXTENDED_REASONING))
     if user_config.WEB_GROUNDING is not None:
         set_web_grounding_env(str(user_config.WEB_GROUNDING))
+    if user_config.KANDINSKY_API_KEY is not None:
+        set_kandinsky_api_key_env(str(user_config.KANDINSKY_API_KEY))

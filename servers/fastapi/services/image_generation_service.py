@@ -9,13 +9,17 @@ from models.sql.image_asset import ImageAsset
 from utils.download_helpers import download_file
 from utils.get_env import get_pexels_api_key_env
 from utils.get_env import get_pixabay_api_key_env
+from utils.get_env import get_kandinsky_api_key_env
 from utils.image_provider import (
     is_pixels_selected,
     is_pixabay_selected,
     is_gemini_flash_selected,
     is_dalle3_selected,
+    is_kandinsky_selected
 )
 import uuid
+from fusionbrain_sdk_python import AsyncFBClient, PipelineType
+import base64
 
 
 class ImageGenerationService:
@@ -33,6 +37,8 @@ class ImageGenerationService:
             return self.generate_image_google
         elif is_dalle3_selected():
             return self.generate_image_openai
+        elif is_kandinsky_selected():
+            return self.generate_image_kandinsky
         return None
 
     def is_stock_provider_selected(self):
@@ -110,6 +116,48 @@ class ImageGenerationService:
                     f.write(part.inline_data.data)
 
         return image_path
+
+    async def generate_image_kandinsky(self, prompt: str, output_directory: str) -> str:
+        def save_base64_list(base64_list, out_dir="outputs", fmt="jpg"):
+            import os
+            os.makedirs(out_dir, exist_ok=True)
+            saved_files = []
+            for i, b64_str in enumerate(base64_list):
+                image_data = base64.b64decode(b64_str)
+                path = os.path.join(out_dir, f"image_{i}.{fmt}")
+                with open(path, "wb") as f:
+                    f.write(image_data)
+                saved_files.append(path)
+            return saved_files
+
+        async_client = AsyncFBClient(x_key=get_kandinsky_api_key_env(),
+                                     x_secret='2AEC252182C203D9EC6F6828F5BF50CD')
+
+        pipelines = await async_client.get_pipelines_by_type(PipelineType.TEXT2IMAGE)
+        text2image_pipeline = pipelines[0]  # Using the first available pipeline
+        print(f"Using pipeline: {text2image_pipeline.name}")
+
+        # 2. Run the generation
+        run_result = await async_client.run_pipeline(
+            pipeline_id=text2image_pipeline.id,
+            prompt=prompt,
+            negative_prompt="blurry, cartoon, painting, low quality",
+            style="infografics, realistic"
+        )
+
+        # 3. Wait for the final result
+        print(f"Task started with UUID: {run_result.uuid}")
+        final_status = await async_client.wait_for_completion(
+            request_id=run_result.uuid,
+            initial_delay=run_result.status_time
+        )
+
+        if final_status.status == 'DONE':
+            files = final_status.result.files
+            saved_files = save_base64_list(files, out_dir=output_directory)
+            print("Kandinsky saved:", saved_files)
+        else:
+            print(f"Generation failed with status: {final_status.status}")
 
     async def get_image_from_pexels(self, prompt: str) -> str:
         async with aiohttp.ClientSession(trust_env=True) as session:

@@ -5,6 +5,7 @@ from utils.get_env import (
     get_openai_api_key_env,
     get_pexels_api_key_env,
     get_pixabay_api_key_env,
+    get_kandinsky_api_key_env,
 )
 
 
@@ -22,6 +23,9 @@ def is_gemini_flash_selected() -> bool:
 
 def is_dalle3_selected() -> bool:
     return ImageProvider.DALLE3 == get_selected_image_provider()
+
+def is_kandinsky_selected() -> bool:
+    return ImageProvider.KANDINSKY == get_selected_image_provider()
 
 
 def get_selected_image_provider() -> ImageProvider | None:
@@ -46,5 +50,7 @@ def get_image_provider_api_key() -> str:
         return get_google_api_key_env()
     elif selected_image_provider == ImageProvider.DALLE3:
         return get_openai_api_key_env()
+    elif selected_image_provider == ImageProvider.KANDINSKY:
+        return get_kandinsky_api_key_env()
     else:
         raise ValueError(f"Invalid image provider: {selected_image_provider}")
