@@ -65,6 +65,10 @@ def set_image_provider_env(value):
     os.environ["IMAGE_PROVIDER"] = value
 
 
+def set_kandinsky_api_key_env(value):
+    os.environ["KANDINSKY_API_KEY"] = value
+
+
 def set_pixabay_api_key_env(value):
     os.environ["PIXABAY_API_KEY"] = value
 

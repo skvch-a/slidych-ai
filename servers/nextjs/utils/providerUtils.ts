@@ -41,6 +41,7 @@ export const updateLLMConfig = (
     custom_model: "CUSTOM_MODEL",
     pexels_api_key: "PEXELS_API_KEY",
     pixabay_api_key: "PIXABAY_API_KEY",
+    kandinsky_api_key: "KANDINSKY_API_KEY",
     image_provider: "IMAGE_PROVIDER",
     use_custom_url: "USE_CUSTOM_URL",
     tool_calls: "TOOL_CALLS",

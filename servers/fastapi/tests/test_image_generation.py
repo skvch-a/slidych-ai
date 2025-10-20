@@ -15,7 +15,7 @@ class TestImageGenerationService:
     """
     Testing the image Generation Service
     """
-    
+
     @pytest.fixture
     def mock_images_directory(self, tmp_path):
         """
@@ -24,14 +24,14 @@ class TestImageGenerationService:
         images_dir = tmp_path / "images"
         images_dir.mkdir()
         return str(images_dir)
-    
+
     @pytest.fixture
     def sample_image_prompt(self):
         """
         Creates a sample ImagePrompt for testing
         """
         return ImagePrompt(prompt="A beautiful sunset over mountains")
-    
+
     def test_image_generation_service_initialization(self, mock_images_directory):
         """
         Test initialization of ImageGenerationService with output directory
@@ -42,7 +42,7 @@ class TestImageGenerationService:
             service = ImageGenerationService(mock_images_directory)
             assert service.output_directory == mock_images_directory
             assert service.image_gen_func is not None or service.image_gen_func is None
-    
+
     def test_get_image_gen_func_pixabay_selected(self, mock_images_directory):
         """
             Testing the function selection when Pixabay is selected
@@ -56,7 +56,7 @@ class TestImageGenerationService:
                         with patch.dict(os.environ, {"IMAGE_PROVIDER": "pixabay"}):
                             service = ImageGenerationService(mock_images_directory)
                             assert service.image_gen_func == service.get_image_from_pixabay
-    
+
     def test_get_image_gen_func_pexels_selected(self, mock_images_directory):
         """
         Test function selection when Pexels is selected
@@ -70,7 +70,7 @@ class TestImageGenerationService:
                         with patch.dict(os.environ, {"IMAGE_PROVIDER": "pexels"}):
                             service = ImageGenerationService(mock_images_directory)
                             assert service.image_gen_func == service.get_image_from_pexels
-    
+
     def test_get_image_gen_func_dalle3_selected(self, mock_images_directory):
         """
         Test function selection when DALL-E 3 is selected
@@ -84,7 +84,7 @@ class TestImageGenerationService:
                         with patch.dict(os.environ, {"IMAGE_PROVIDER": "dall-e-3"}):
                             service = ImageGenerationService(mock_images_directory)
                             assert service.image_gen_func == service.generate_image_openai
-    
+
     def test_is_stock_provider_selected(self, mock_images_directory):
         """
         Test if stock provider is selected based on environment variable
@@ -96,19 +96,19 @@ class TestImageGenerationService:
                 with patch.dict(os.environ, {"IMAGE_PROVIDER": "pexels"}):
                     service = ImageGenerationService(mock_images_directory)
                     assert service.is_stock_provider_selected() is True
-        
+
         with patch('services.image_generation_service.is_pixels_selected', return_value=False):
             with patch('services.image_generation_service.is_pixabay_selected', return_value=True):
                 with patch.dict(os.environ, {"IMAGE_PROVIDER": "pixabay"}):
                     service = ImageGenerationService(mock_images_directory)
                     assert service.is_stock_provider_selected() is True
-        
+
         with patch('services.image_generation_service.is_pixels_selected', return_value=False):
             with patch('services.image_generation_service.is_pixabay_selected', return_value=False):
                 with patch.dict(os.environ, {"IMAGE_PROVIDER": "dall-e-3"}):
                     service = ImageGenerationService(mock_images_directory)
                     assert service.is_stock_provider_selected() is False
-    
+
     def test_generate_image_with_pexels_success(self, mock_images_directory, sample_image_prompt):
         """
         Test successful image generation with Pexels provider
@@ -123,7 +123,7 @@ class TestImageGenerationService:
                         with patch('services.image_generation_service.is_gemini_flash_selected', return_value=False):
                             with patch('services.image_generation_service.is_dalle3_selected', return_value=False):
                                 service = ImageGenerationService(mock_images_directory)
-                                
+
                                 mock_response = AsyncMock()
                                 mock_response.json = AsyncMock(return_value={
                                     "photos": [{
@@ -132,18 +132,18 @@ class TestImageGenerationService:
                                         }
                                     }]
                                 })
-                                
+
                                 mock_session = AsyncMock()
                                 mock_session.get = AsyncMock(return_value=mock_response)
                                 mock_session.__aenter__ = AsyncMock(return_value=mock_session)
                                 mock_session.__aexit__ = AsyncMock(return_value=None)
-                                
+
                                 with patch('aiohttp.ClientSession', return_value=mock_session):
                                     result = await service.generate_image(sample_image_prompt)
                                     assert result == "https://example.com/image.jpg"
-        
+
         asyncio.run(run_test())
-    
+
     def test_generate_image_with_dalle3_success(self, mock_images_directory, sample_image_prompt):
         """
         Test successful image generation with DALL-E 3 provider
@@ -158,25 +158,25 @@ class TestImageGenerationService:
                         with patch('services.image_generation_service.is_gemini_flash_selected', return_value=False):
                             with patch('services.image_generation_service.is_dalle3_selected', return_value=True):
                                 service = ImageGenerationService(mock_images_directory)
-                                
+
                                 # Create a real test file
                                 test_image_path = f"{mock_images_directory}/test_image.jpg"
                                 with open(test_image_path, 'w') as f:
                                     f.write("fake image content")
-                                
+
                                 # Mock generate_image_openai to return the test file path
                                 async def mock_openai_generate(prompt, output_dir):
                                     return test_image_path
-                                
+
                                 service.generate_image_openai = mock_openai_generate
-                                
+
                                 result = await service.generate_image(sample_image_prompt)
-                                
+
                                 # Should return ImageAsset for AI providers
                                 assert isinstance(result, ImageAsset)
                                 assert result.path == test_image_path
                                 assert result.extras["prompt"] == sample_image_prompt.prompt
-    
+
     def test_generate_image_no_provider_selected(self, mock_images_directory, sample_image_prompt):
         """
         Test generate_image when no provider is selected
@@ -191,14 +191,14 @@ class TestImageGenerationService:
                         with patch('services.image_generation_service.is_dalle3_selected', return_value=False):
                             with patch.dict(os.environ, {"IMAGE_PROVIDER": "pexels"}):
                                 service = ImageGenerationService(mock_images_directory)
-                                
+
                                 result = await service.generate_image(sample_image_prompt)
-                                
+
                                 # Should return placeholder
                                 assert result == "/static/images/placeholder.jpg"
-        
+
         asyncio.run(run_test())
-    
+
     def test_generate_image_provider_error(self, mock_images_directory, sample_image_prompt):
         """
         Test generate_image when provider function raises an error
@@ -213,18 +213,83 @@ class TestImageGenerationService:
                         with patch('services.image_generation_service.is_dalle3_selected', return_value=False):
                             with patch.dict(os.environ, {"IMAGE_PROVIDER": "pexels"}):
                                 service = ImageGenerationService(mock_images_directory)
-                                
+
                                 async def mock_pexels_error(*args, **kwargs):
                                     raise Exception("API Error")
-                                
+
                                 service.get_image_from_pexels = mock_pexels_error
-                                
+
                                 result = await service.generate_image(sample_image_prompt)
-                                
+
                                 assert result == "/static/images/placeholder.jpg"
-        
+
         asyncio.run(run_test())
-    
+
+    def test_get_image_gen_func_kandinsky_selected(self, mock_images_directory):
+        """
+        Test function selection when Kandinsky is selected
+        - Checks if the correct function is selected based on environment variable
+        - Ensures that the function is set to generate_image_kandinsky when Kandinsky is selected
+        """
+        # Мы "мокаем" (patch) все функции выбора, чтобы изолировать только Kandinsky
+        with patch('services.image_generation_service.is_pixabay_selected', return_value=False):
+            with patch('services.image_generation_service.is_pixels_selected', return_value=False):
+                with patch('services.image_generation_service.is_gemini_flash_selected', return_value=False):
+                    with patch('services.image_generation_service.is_dalle3_selected', return_value=False):
+                        with patch('services.image_generation_service.is_kandinsky_selected', return_value=True):
+                            # Устанавливаем переменные окружения, которые ожидает сервис
+                            with patch.dict(os.environ, {"IMAGE_PROVIDER": "Kandinsky", "FB_API_KEY": "test_key",
+                                                         "FB_API_SECRET": "test_secret"}):
+                                service = ImageGenerationService(mock_images_directory)
+                                # Проверяем, что была выбрана правильная функция
+                                assert service.image_gen_func == service.generate_image_kandinsky
+
+    def test_generate_image_with_kandinsky_success(self, mock_images_directory, sample_image_prompt):
+        """
+        Test successful image generation with Kandinsky provider
+        - Mocks the Kandinsky API client to return a valid image
+        - Ensures that the image generation function returns an ImageAsset object
+        - Checks if the image generation function is called with the correct prompt
+        """
+
+        async def run_test():
+            # Устанавливаем переменные окружения для этого теста
+            with patch.dict(os.environ,
+                            {"IMAGE_PROVIDER": "Kandinsky", "FB_API_KEY": "test_key", "FB_API_SECRET": "test_secret"}):
+                # Изолируем проверку только на Kandinsky
+                with patch('services.image_generation_service.is_pixels_selected', return_value=False):
+                    with patch('services.image_generation_service.is_pixabay_selected', return_value=False):
+                        with patch('services.image_generation_service.is_gemini_flash_selected', return_value=False):
+                            with patch('services.image_generation_service.is_dalle3_selected', return_value=False):
+                                with patch('services.image_generation_service.is_kandinsky_selected',
+                                           return_value=True):
+                                    service = ImageGenerationService(mock_images_directory)
+
+                                    # Создаем реальный тестовый файл, который "вернет" наш мок
+                                    test_image_path = f"{mock_images_directory}/kandinsky_test_image.png"
+                                    with open(test_image_path, 'wb') as f:
+                                        # Пишем фейковые байты картинки (например, 1x1 PNG)
+                                        f.write(
+                                            b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x06\x00\x00\x00\x1f\x15\xc4\x89\x00\x00\x00\nIDATx\x9cc\x00\x01\x00\x00\x05\x00\x01\r\n-\xb4\x00\x00\x00\x00IEND\xaeB`\x82')
+
+                                    # "Мокаем" (имитируем) функцию генерации Kandinsky
+                                    # Она будет возвращать путь к нашему фейковому файлу вместо реального вызова API
+                                    async def mock_kandinsky_generate(prompt, output_dir):
+                                        return test_image_path
+
+                                    # Заменяем реальную функцию на наш мок
+                                    service.generate_image_kandinsky = mock_kandinsky_generate
+
+                                    # Вызываем основной метод сервиса
+                                    result = await service.generate_image(sample_image_prompt)
+
+                                    # Проверяем результат
+                                    assert isinstance(result, ImageAsset)
+                                    assert result.path == test_image_path
+                                    assert result.extras["prompt"] == sample_image_prompt.prompt
+
+        asyncio.run(run_test())
+
     def test_get_image_from_pexels_real_function(self, mock_images_directory):
         """T
         Test REAL Pexels function with mocked HTTP call
@@ -235,7 +300,7 @@ class TestImageGenerationService:
         async def run_test():
             with patch.dict(os.environ, {"IMAGE_PROVIDER": "pexels", "PEXELS_API_KEY": "test_pexels_key"}):
                 service = ImageGenerationService(mock_images_directory)
-                
+
                 mock_response = AsyncMock()
                 mock_response.json = AsyncMock(return_value={
                     "photos": [{
@@ -244,20 +309,20 @@ class TestImageGenerationService:
                         }
                     }]
                 })
-                
+
                 mock_session = AsyncMock()
                 mock_session.get = AsyncMock(return_value=mock_response)
                 mock_session.__aenter__ = AsyncMock(return_value=mock_session)
                 mock_session.__aexit__ = AsyncMock(return_value=None)
-                
+
                 with patch('aiohttp.ClientSession', return_value=mock_session):
                     result = await service.get_image_from_pexels("sunset")
-                    
+
                     assert result == "https://example.com/pexels_image.jpg"
                     mock_session.get.assert_called_once()
-        
+
         asyncio.run(run_test())
-    
+
     def test_get_image_from_pixabay_real_function(self, mock_images_directory):
         """
         Test REAL Pixabay function with mocked HTTP call
@@ -268,25 +333,25 @@ class TestImageGenerationService:
         async def run_test():
             with patch.dict(os.environ, {"IMAGE_PROVIDER": "pixabay", "PIXABAY_API_KEY": "test_pixabay_key"}):
                 service = ImageGenerationService(mock_images_directory)
-                
+
                 mock_response = AsyncMock()
                 mock_response.json = AsyncMock(return_value={
                     "hits": [{
                         "largeImageURL": "https://example.com/pixabay_image.jpg"
                     }]
                 })
-                
+
                 mock_session = AsyncMock()
                 mock_session.get = AsyncMock(return_value=mock_response)
                 mock_session.__aenter__ = AsyncMock(return_value=mock_session)
                 mock_session.__aexit__ = AsyncMock(return_value=None)
-                
+
                 with patch('aiohttp.ClientSession', return_value=mock_session):
                     result = await service.get_image_from_pixabay("sunset")
-                    
+
                     assert result == "https://example.com/pixabay_image.jpg"
                     mock_session.get.assert_called_once()
-        
+
         asyncio.run(run_test())
 
 

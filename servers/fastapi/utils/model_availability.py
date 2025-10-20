@@ -22,6 +22,7 @@ from utils.get_env import get_ollama_model_env
 from utils.get_env import get_custom_llm_api_key_env
 from utils.get_env import get_custom_llm_url_env
 from utils.get_env import get_custom_model_env
+from utils.get_env import get_kandinsky_api_key_env
 from utils.llm_provider import (
     get_llm_provider,
     is_custom_llm_selected,
@@ -128,3 +129,7 @@ async def check_llm_and_image_provider_api_or_model_availability():
             openai_api_key = get_openai_api_key_env()
             if not openai_api_key:
                 raise Exception("OPENAI_API_KEY must be provided")
+        elif selected_image_provider == ImageProvider.KANDINSKY:
+            kandinsky_api_key = get_kandinsky_api_key_env()
+            if not kandinsky_api_key:
+                raise Exception("KANDINSKY_API_KEY must be provided")

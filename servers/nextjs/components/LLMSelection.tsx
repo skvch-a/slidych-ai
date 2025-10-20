@@ -308,13 +308,17 @@ export default function LLMProviderSelection({
                         ? llmConfig.PEXELS_API_KEY || ""
                         : provider.apiKeyField === "PIXABAY_API_KEY"
                           ? llmConfig.PIXABAY_API_KEY || ""
-                          : ""
+                          : provider.apiKeyField === "KANDINSKY_API_KEY"
+                            ? llmConfig.KANDINSKY_API_KEY || ""
+                            : ""
                     }
                     onChange={(e) => {
                       if (provider.apiKeyField === "PEXELS_API_KEY") {
                         input_field_changed(e.target.value, "pexels_api_key");
                       } else if (provider.apiKeyField === "PIXABAY_API_KEY") {
                         input_field_changed(e.target.value, "pixabay_api_key");
+                      } else if (provider.apiKeyField === "KANDINSKY_API_KEY") {
+                        input_field_changed(e.target.value, "kandinsky_api_key");
                       }
                     }}
                   />
