@@ -23,6 +23,7 @@ from utils.get_env import (
     get_pixabay_api_key_env,
     get_extended_reasoning_env,
     get_web_grounding_env,
+    get_kandinsky_api_key_env,
 )
 from utils.parsers import parse_bool_or_none
 from utils.set_env import (
@@ -79,6 +80,7 @@ def get_user_config():
         IMAGE_PROVIDER=existing_config.IMAGE_PROVIDER or get_image_provider_env(),
         PIXABAY_API_KEY=existing_config.PIXABAY_API_KEY or get_pixabay_api_key_env(),
         PEXELS_API_KEY=existing_config.PEXELS_API_KEY or get_pexels_api_key_env(),
+        KANDINSKY_API_KEY=existing_config.KANDINSKY_API_KEY or get_kandinsky_api_key_env(),
         TOOL_CALLS=(
             existing_config.TOOL_CALLS
             if existing_config.TOOL_CALLS is not None

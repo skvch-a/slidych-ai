@@ -118,26 +118,25 @@ class ImageGenerationService:
         return image_path
 
     async def generate_image_kandinsky(self, prompt: str, output_directory: str) -> str:
-        def save_base64_list(base64_list, out_dir="outputs", fmt="jpg"):
+        def save_base64_list(base64_list, uuid, out_dir="outputs", fmt="jpg"):
             import os
             os.makedirs(out_dir, exist_ok=True)
             saved_files = []
             for i, b64_str in enumerate(base64_list):
                 image_data = base64.b64decode(b64_str)
-                path = os.path.join(out_dir, f"image_{i}.{fmt}")
+                path = os.path.join(out_dir, f"image_{uuid}.{fmt}")
                 with open(path, "wb") as f:
                     f.write(image_data)
                 saved_files.append(path)
             return saved_files
 
-        async_client = AsyncFBClient(x_key=get_kandinsky_api_key_env(),
+        async_client = AsyncFBClient(x_key=get_kandinsky_api_key_env(), #'AAC7740E40E6623D3F6940F908B25D02'
                                      x_secret='2AEC252182C203D9EC6F6828F5BF50CD')
 
         pipelines = await async_client.get_pipelines_by_type(PipelineType.TEXT2IMAGE)
         text2image_pipeline = pipelines[0]  # Using the first available pipeline
         print(f"Using pipeline: {text2image_pipeline.name}")
 
-        # 2. Run the generation
         run_result = await async_client.run_pipeline(
             pipeline_id=text2image_pipeline.id,
             prompt=prompt,
@@ -145,19 +144,23 @@ class ImageGenerationService:
             style="infografics, realistic"
         )
 
-        # 3. Wait for the final result
+        uuid = run_result.uuid
         print(f"Task started with UUID: {run_result.uuid}")
         final_status = await async_client.wait_for_completion(
             request_id=run_result.uuid,
             initial_delay=run_result.status_time
         )
 
+        saved_files = ''
         if final_status.status == 'DONE':
             files = final_status.result.files
-            saved_files = save_base64_list(files, out_dir=output_directory)
-            print("Kandinsky saved:", saved_files)
+            saved_files = save_base64_list(files, uuid, out_dir=output_directory)
+            # print("Kandinsky saved:", saved_files)
         else:
             print(f"Generation failed with status: {final_status.status}")
+
+        # print('saved_files: ', saved_files)
+        return saved_files[0]
 
     async def get_image_from_pexels(self, prompt: str) -> str:
         async with aiohttp.ClientSession(trust_env=True) as session:
