@@ -308,7 +308,9 @@ export default function LLMProviderSelection({
                         ? llmConfig.PEXELS_API_KEY || ""
                         : provider.apiKeyField === "PIXABAY_API_KEY"
                           ? llmConfig.PIXABAY_API_KEY || ""
-                          : ""
+                          : provider.apiKeyField === "KANDINSKY_API_KEY"
+                            ? llmConfig.KANDINSKY_API_KEY || ""
+                            : ""
                     }
                     onChange={(e) => {
                       if (provider.apiKeyField === "PEXELS_API_KEY") {

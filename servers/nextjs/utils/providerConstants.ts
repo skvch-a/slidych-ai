@@ -61,6 +61,15 @@ export const IMAGE_PROVIDERS: Record<string, ImageProviderOption> = {
     apiKeyField: "GOOGLE_API_KEY",
     apiKeyFieldLabel: "Google API Key"
   },
+  Kandinsky: {
+    value: "Kandinsky",
+    label: "Kandinsky",
+    description: "Image generation model by Sber",
+    icon: "/icons/kandinsky.png",
+    requiresApiKey: true,
+    apiKeyField: "KANDINSKY_API_KEY",
+    apiKeyFieldLabel: "Kandinsky API Key"
+  },
 };
 
 export const LLM_PROVIDERS: Record<string, LLMProviderOption> = {

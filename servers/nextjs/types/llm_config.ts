@@ -27,6 +27,9 @@ export interface LLMConfig {
   PEXELS_API_KEY?: string;
   PIXABAY_API_KEY?: string;
 
+  //Kandinsky
+  KANDINSKY_API_KEY?: string;
+
   // Other Configs
   TOOL_CALLS?: boolean;
   DISABLE_THINKING?: boolean;

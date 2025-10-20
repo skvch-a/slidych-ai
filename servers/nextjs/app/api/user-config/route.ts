@@ -51,6 +51,7 @@ export async function POST(request: Request) {
       userConfig.PIXABAY_API_KEY || existingConfig.PIXABAY_API_KEY,
     IMAGE_PROVIDER: userConfig.IMAGE_PROVIDER || existingConfig.IMAGE_PROVIDER,
     PEXELS_API_KEY: userConfig.PEXELS_API_KEY || existingConfig.PEXELS_API_KEY,
+    KANDINSKY_API_KEY: userConfig.KANDINSKY_API_KEY || existingConfig.KANDINSKY_API_KEY,
     TOOL_CALLS: userConfig.TOOL_CALLS === undefined ? existingConfig.TOOL_CALLS : userConfig.TOOL_CALLS,
     DISABLE_THINKING: userConfig.DISABLE_THINKING === undefined ? existingConfig.DISABLE_THINKING : userConfig.DISABLE_THINKING,
     EXTENDED_REASONING:
