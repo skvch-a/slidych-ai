@@ -317,6 +317,8 @@ export default function LLMProviderSelection({
                         input_field_changed(e.target.value, "pexels_api_key");
                       } else if (provider.apiKeyField === "PIXABAY_API_KEY") {
                         input_field_changed(e.target.value, "pixabay_api_key");
+                      } else if (provider.apiKeyField === "KANDINSKY_API_KEY") {
+                        input_field_changed(e.target.value, "kandinsky_api_key");
                       }
                     }}
                   />
