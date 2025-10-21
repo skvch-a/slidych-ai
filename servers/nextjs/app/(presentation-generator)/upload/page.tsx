@@ -5,9 +5,8 @@ import Header from "@/app/(presentation-generator)/dashboard/components/Header";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Slydich | Open Source AI presentation generator",
-  description:
-    "Open-source AI presentation generator with custom layouts, multi-model support (OpenAI, Gemini, Ollama), and PDF/PPTX export. A free Gamma alternative.",
+  title: "Слайдыч | AI-ассистент для генерации презентаций",
+  description: "AI-ассистент для генерации презентаций с возможностью добавления шаблонов, поддержкой нескольких моделей (OpenAI, Gemini, Ollama) и экспортом результата в PDF/PPTX формате.",
   alternates: {
     canonical: "https://slidych.ai/create",
   },
@@ -24,18 +23,16 @@ export const metadata: Metadata = {
     "business presentations",
   ],
   openGraph: {
-    title: "Create Data Presentation | Slidych",
-    description:
-      "Open-source AI presentation generator with custom layouts, multi-model support (OpenAI, Gemini, Ollama), and PDF/PPTX export. A free Gamma alternative.",
+    title: "Создание презентации | Слайдыч",
+    description: "AI-ассистент для генерации презентаций с возможностью добавления шаблонов, поддержкой нескольких моделей (OpenAI, Gemini, Ollama) и экспортом результата в PDF/PPTX формате.",
     type: "website",
     url: "https://slidych.ai/create",
     siteName: "Slidych",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Create Data Presentation | Slidych",
-    description:
-      "Open-source AI presentation generator with custom layouts, multi-model support (OpenAI, Gemini, Ollama), and PDF/PPTX export. A free Gamma alternative.",
+    title: "Создание презентации | Слайдыч",
+    description: "AI-ассистент для генерации презентаций с возможностью добавления шаблонов, поддержкой нескольких моделей (OpenAI, Gemini, Ollama) и экспортом результата в PDF/PPTX формате.",
     site: "@slidych_ai",
     creator: "@slidych_ai",
   },
@@ -47,7 +44,7 @@ const page = () => {
       <Header />
       <div className="flex flex-col items-center justify-center  py-8">
         <h1 className="text-3xl font-semibold font-instrument_sans">
-          Create Presentation{" "}
+          Создание презентации
         </h1>
         {/* <p className='text-sm text-gray-500'>We will generate a presentation for you</p> */}
       </div>

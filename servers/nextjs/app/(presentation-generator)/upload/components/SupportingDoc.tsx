@@ -113,7 +113,7 @@ const SupportingDoc = ({ files, onFilesChange }: SupportingDocProps) => {
 
     return (
         <div className="w-full">
-            <h2 className="text-[#444] font-instrument_sans pt-4 text-lg mb-4">Supporting Documents</h2>
+            <h2 className="text-[#444] font-instrument_sans pt-4 text-lg mb-4">Документы для основы презентации</h2>
             <div
                 onClick={() => fileInputRef.current?.click()}
                 className={cn(
@@ -134,12 +134,12 @@ const SupportingDoc = ({ files, onFilesChange }: SupportingDocProps) => {
 
                     <p className="text-gray-600 text-center mb-2">
                         {isDragging
-                            ? 'Drop your file here'
-                            : 'Drag and drop your file here or click below button'
+                            ? 'Переместите файл сюда'
+                            : 'Переместите свой файл сюда или нажмите на кнопку ниже'
                         }
                     </p>
                     <p className="text-gray-400 text-sm text-center mb-4">
-                        Supports PDFs, Text files, PPTX, DOCX
+                        Поддерживает PDF, TXT, PPTX, DOCX
                     </p>
 
                     <input
@@ -162,7 +162,7 @@ const SupportingDoc = ({ files, onFilesChange }: SupportingDocProps) => {
                             hover:bg-purple-700 transition-colors duration-200
                             font-medium text-sm"
                     >
-                        Choose Files
+                        Выбрать файлы
                     </button>
                 </div>
 

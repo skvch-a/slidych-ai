@@ -40,6 +40,24 @@ type SlideOption = "5" | "8" | "9" | "10" | "11" | "12" | "13" | "14" | "15" | "
 // Constants
 const SLIDE_OPTIONS: SlideOption[] = ["5", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"];
 
+function calculateSlidesTitle(slidesCount: string | null): string {
+  if (!slidesCount)
+    return "слайдов";
+
+  const num = parseInt(slidesCount);
+  const shouldEndInOv = ["11", "12", "13", "14", "15", "16", "17", "18", "19"];
+  if (shouldEndInOv.some(n => slidesCount.endsWith(n)))
+    return "слайдов";
+  
+  if (slidesCount.endsWith("1"))
+    return "слайд";
+
+  const shouldEndInA = ["2", "3", "4"];
+  if (shouldEndInA.some(n => slidesCount.endsWith(n)))
+    return "слайда";
+
+  return "слайдов";
+}
 /**
  * Renders a select component for slide count
  */
@@ -104,14 +122,14 @@ const SlideCountSelect: React.FC<{
               placeholder="--"
               className="h-8 w-16 px-2 text-sm"
             />
-            <span className="text-sm font-medium">slides</span>
+            <span className="text-sm font-medium">{calculateSlidesTitle(value)}</span>
           </div>
         </div>
 
         {/* Hidden item to allow SelectValue to render custom selection */}
         {value && !SLIDE_OPTIONS.includes(value as SlideOption) && (
           <SelectItem value={value} className="hidden">
-            {value} slides
+            {value} {calculateSlidesTitle(value)}
           </SelectItem>
         )}
 
@@ -122,7 +140,7 @@ const SlideCountSelect: React.FC<{
             className="font-instrument_sans text-sm font-medium"
             role="option"
           >
-            {option} slides
+            {option} слайдов
           </SelectItem>
         ))}
       </SelectContent>
