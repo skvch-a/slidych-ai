@@ -150,7 +150,7 @@ export default function Home() {
             <img src="/Logo.png" alt="Presenton Logo" className="h-12" />
           </div>
           <p className="text-gray-600 text-sm">
-            Open-source AI presentation generator
+            AI-ассистент для инвестиционных презентаций
           </p>
         </div>
 

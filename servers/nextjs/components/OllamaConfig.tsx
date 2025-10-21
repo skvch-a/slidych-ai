@@ -71,7 +71,7 @@ export default function OllamaConfig({
       <div>
         <div className="flex items-center justify-between mb-4 bg-green-50 p-2 rounded-sm">
           <label className="text-sm font-medium text-gray-700">
-            Use custom Ollama URL
+            Использовать свой URL для Ollama
           </label>
           <Switch
             checked={useCustomUrl}
@@ -95,7 +95,7 @@ export default function OllamaConfig({
             </div>
             <p className="mt-2 text-sm text-gray-500 flex items-center gap-2">
               <span className="block w-1 h-1 rounded-full bg-gray-400"></span>
-              Change this if you are using a custom Ollama instance
+              Вставьте URL своего экземпляра Ollama
             </p>
           </div>
         )}
@@ -104,14 +104,14 @@ export default function OllamaConfig({
       {/* Model Selection */}
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700 mb-3">
-          Choose a supported model
+          Выберите поддерживаемую модель
         </label>
         <div className="w-full">
           {ollamaModelsLoading ? (
             <div className="w-full h-12 px-4 py-4 border border-gray-300 rounded-lg bg-gray-50 flex items-center justify-center">
               <div className="flex items-center gap-2">
                 <Loader2 className="w-4 h-4 animate-spin text-gray-500" />
-                <span className="text-sm text-gray-600">Loading models...</span>
+                <span className="text-sm text-gray-600">Загрузка моделей...</span>
               </div>
             </div>
           ) : ollamaModels && ollamaModels.length > 0 ? (
