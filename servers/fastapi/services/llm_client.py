@@ -54,6 +54,7 @@ from utils.get_env import (
     get_openai_api_key_env,
     get_tool_calls_env,
     get_web_grounding_env,
+    get_gigachat_api_key_env,
 )
 from utils.llm_provider import get_llm_provider, get_model
 from utils.parsers import parse_bool_or_none
@@ -67,8 +68,15 @@ from utils.schema_utils import (
 class LLMClient:
     def __init__(self):
         self.llm_provider = get_llm_provider()
-        self._client = self._get_client()
+        self._cached_client = self._get_client() if self.llm_provider != LLMProvider.GIGACHAT else None
         self.tool_calls_handler = LLMToolCallsHandler(self)
+    
+    @property
+    def client(self):
+        # Для GigaChat создаем клиент при каждом обращении (токен может истечь)
+        if self.llm_provider == LLMProvider.GIGACHAT:
+            return self._get_gigachat_client()
+        return self._cached_client
 
     # ? Use tool calls
     def use_tool_calls_for_structured_output(self) -> bool:
@@ -81,6 +89,7 @@ class LLMClient:
         if (
             self.llm_provider == LLMProvider.OLLAMA
             or self.llm_provider == LLMProvider.CUSTOM
+            or self.llm_provider == LLMProvider.GIGACHAT
         ):
             return False
         return parse_bool_or_none(get_web_grounding_env()) or False
@@ -102,10 +111,12 @@ class LLMClient:
                 return self._get_ollama_client()
             case LLMProvider.CUSTOM:
                 return self._get_custom_client()
+            case LLMProvider.GIGACHAT:
+                return self._get_gigachat_client()
             case _:
                 raise HTTPException(
                     status_code=400,
-                    detail="LLM Provider must be either openai, google, anthropic, ollama, or custom",
+                    detail="LLM Provider must be either openai, google, anthropic, ollama, custom, or gigachat",
                 )
 
     def _get_openai_client(self):
@@ -147,6 +158,32 @@ class LLMClient:
         return AsyncOpenAI(
             base_url=get_custom_llm_url_env(),
             api_key=get_custom_llm_api_key_env() or "null",
+        )
+
+    def _get_gigachat_client(self):
+        import httpx
+        from utils.gigachat_auth import get_gigachat_access_token
+        
+        if not get_gigachat_api_key_env():
+            raise HTTPException(
+                status_code=400,
+                detail="GigaChat API Key is not set",
+            )
+        
+        access_token = get_gigachat_access_token(get_gigachat_api_key_env())
+        if not access_token:
+            raise HTTPException(
+                status_code=400,
+                detail="Failed to get GigaChat access token",
+            )
+        
+        # Создаем HTTP клиент без проверки SSL
+        http_client = httpx.AsyncClient(verify=False)
+        
+        return AsyncOpenAI(
+            api_key=access_token,
+            base_url="https://gigachat.devices.sberbank.ru/api/v1",
+            http_client=http_client
         )
 
     # ? Prompts
@@ -198,7 +235,7 @@ class LLMClient:
         extra_body: Optional[dict] = None,
         depth: int = 0,
     ) -> str | None:
-        client: AsyncOpenAI = self._client
+        client: AsyncOpenAI = self.client
         response = await client.chat.completions.create(
             model=model,
             messages=[message.model_dump() for message in messages],
@@ -251,7 +288,7 @@ class LLMClient:
         max_tokens: Optional[int] = None,
         depth: int = 0,
     ) -> str | None:
-        client: genai.Client = self._client
+        client: genai.Client = self.client
 
         google_tools = None
         if tools:
@@ -327,7 +364,7 @@ class LLMClient:
         tools: Optional[List[dict]] = None,
         depth: int = 0,
     ) -> str | None:
-        client: AsyncAnthropic = self._client
+        client: AsyncAnthropic = self.client
 
         response: AnthropicMessage = await client.messages.create(
             model=model,
@@ -407,6 +444,20 @@ class LLMClient:
             depth=depth,
         )
 
+    async def _generate_gigachat(
+        self,
+        model: str,
+        messages: List[LLMMessage],
+        max_tokens: Optional[int] = None,
+        depth: int = 0,
+    ):
+        return await self._generate_openai(
+            model=model,
+            messages=messages,
+            max_tokens=max_tokens,
+            depth=depth,
+        )
+
     async def generate(
         self,
         model: str,
@@ -447,6 +498,10 @@ class LLMClient:
                 content = await self._generate_custom(
                     model=model, messages=messages, max_tokens=max_tokens
                 )
+            case LLMProvider.GIGACHAT:
+                content = await self._generate_gigachat(
+                    model=model, messages=messages, max_tokens=max_tokens
+                )
         if content is None:
             raise HTTPException(
                 status_code=400,
@@ -466,7 +521,7 @@ class LLMClient:
         extra_body: Optional[dict] = None,
         depth: int = 0,
     ) -> dict | None:
-        client: AsyncOpenAI = self._client
+        client: AsyncOpenAI = self.client
         response_schema = response_format
         all_tools = [*tools] if tools else None
 
@@ -578,7 +633,7 @@ class LLMClient:
         tools: Optional[List[dict]] = None,
         depth: int = 0,
     ) -> dict | None:
-        client: genai.Client = self._client
+        client: genai.Client = self.client
 
         google_tools = None
         if tools:
@@ -701,7 +756,7 @@ class LLMClient:
         max_tokens: Optional[int] = None,
         depth: int = 0,
     ):
-        client: AsyncAnthropic = self._client
+        client: AsyncAnthropic = self.client
         response: AnthropicMessage = await client.messages.create(
             model=model,
             system=self._get_system_prompt(messages),
@@ -799,6 +854,24 @@ class LLMClient:
             depth=depth,
         )
 
+    async def _generate_gigachat_structured(
+        self,
+        model: str,
+        messages: List[LLMMessage],
+        response_format: dict,
+        strict: bool = False,
+        max_tokens: Optional[int] = None,
+        depth: int = 0,
+    ):
+        return await self._generate_openai_structured(
+            model=model,
+            messages=messages,
+            response_format=response_format,
+            strict=strict,
+            max_tokens=max_tokens,
+            depth=depth,
+        )
+
     async def generate_structured(
         self,
         model: str,
@@ -853,6 +926,14 @@ class LLMClient:
                     strict=strict,
                     max_tokens=max_tokens,
                 )
+            case LLMProvider.GIGACHAT:
+                content = await self._generate_gigachat_structured(
+                    model=model,
+                    messages=messages,
+                    response_format=response_format,
+                    strict=strict,
+                    max_tokens=max_tokens,
+                )
         if content is None:
             raise HTTPException(
                 status_code=400,
@@ -870,7 +951,7 @@ class LLMClient:
         extra_body: Optional[dict] = None,
         depth: int = 0,
     ) -> AsyncGenerator[str, None]:
-        client: AsyncOpenAI = self._client
+        client: AsyncOpenAI = self.client
 
         tool_calls: List[LLMToolCall] = []
         current_index = 0
@@ -966,7 +1047,7 @@ class LLMClient:
         max_tokens: Optional[int] = None,
         depth: int = 0,
     ) -> AsyncGenerator[str, None]:
-        client: genai.Client = self._client
+        client: genai.Client = self.client
 
         google_tools = None
         if tools:
@@ -1038,7 +1119,7 @@ class LLMClient:
         tools: Optional[List[dict]] = None,
         depth: int = 0,
     ):
-        client: AsyncAnthropic = self._client
+        client: AsyncAnthropic = self.client
 
         tool_calls: List[AnthropicToolCall] = []
         async with client.messages.stream(
@@ -1121,6 +1202,20 @@ class LLMClient:
             depth=depth,
         )
 
+    def _stream_gigachat(
+        self,
+        model: str,
+        messages: List[LLMMessage],
+        max_tokens: Optional[int] = None,
+        depth: int = 0,
+    ):
+        return self._stream_openai(
+            model=model,
+            messages=messages,
+            max_tokens=max_tokens,
+            depth=depth,
+        )
+
     def stream(
         self,
         model: str,
@@ -1160,6 +1255,10 @@ class LLMClient:
                 return self._stream_custom(
                     model=model, messages=messages, max_tokens=max_tokens
                 )
+            case LLMProvider.GIGACHAT:
+                return self._stream_gigachat(
+                    model=model, messages=messages, max_tokens=max_tokens
+                )
 
     # ? Stream Structured Content
     async def _stream_openai_structured(
@@ -1173,7 +1272,7 @@ class LLMClient:
         extra_body: Optional[dict] = None,
         depth: int = 0,
     ) -> AsyncGenerator[str, None]:
-        client: AsyncOpenAI = self._client
+        client: AsyncOpenAI = self.client
 
         response_schema = response_format
         all_tools = [*tools] if tools else None
@@ -1322,7 +1421,7 @@ class LLMClient:
         depth: int = 0,
     ) -> AsyncGenerator[str, None]:
 
-        client: genai.Client = self._client
+        client: genai.Client = self.client
 
         google_tools = None
         if tools:
@@ -1427,7 +1526,7 @@ class LLMClient:
         max_tokens: Optional[int] = None,
         depth: int = 0,
     ) -> AsyncGenerator[str, None]:
-        client: AsyncAnthropic = self._client
+        client: AsyncAnthropic = self.client
 
         tool_calls: List[AnthropicToolCall] = []
         has_response_schema_tool_call = False
@@ -1543,6 +1642,24 @@ class LLMClient:
             depth=depth,
         )
 
+    def _stream_gigachat_structured(
+        self,
+        model: str,
+        messages: List[LLMMessage],
+        response_format: dict,
+        strict: bool = False,
+        max_tokens: Optional[int] = None,
+        depth: int = 0,
+    ):
+        return self._stream_openai_structured(
+            model=model,
+            messages=messages,
+            response_format=response_format,
+            strict=strict,
+            max_tokens=max_tokens,
+            depth=depth,
+        )
+
     def stream_structured(
         self,
         model: str,
@@ -1596,10 +1713,18 @@ class LLMClient:
                     strict=strict,
                     max_tokens=max_tokens,
                 )
+            case LLMProvider.GIGACHAT:
+                return self._stream_gigachat_structured(
+                    model=model,
+                    messages=messages,
+                    response_format=response_format,
+                    strict=strict,
+                    max_tokens=max_tokens,
+                )
 
     # ? Web search
     async def _search_openai(self, query: str) -> str:
-        client: AsyncOpenAI = self._client
+        client: AsyncOpenAI = self.client
         response = await client.responses.create(
             model=get_model(),
             tools=[
@@ -1612,7 +1737,7 @@ class LLMClient:
         return response.output_text
 
     async def _search_google(self, query: str) -> str:
-        client: genai.Client = self._client
+        client: genai.Client = self.client
         grounding_tool = GoogleTool(google_search=GoogleSearch())
         config = GenerateContentConfig(tools=[grounding_tool])
 
@@ -1625,7 +1750,7 @@ class LLMClient:
         return response.text
 
     async def _search_anthropic(self, query: str) -> str:
-        client: AsyncAnthropic = self._client
+        client: AsyncAnthropic = self.client
 
         response = await client.messages.create(
             model=get_model(),

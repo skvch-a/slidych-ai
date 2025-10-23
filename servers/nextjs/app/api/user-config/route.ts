@@ -41,6 +41,8 @@ export async function POST(request: Request) {
     GOOGLE_MODEL: userConfig.GOOGLE_MODEL || existingConfig.GOOGLE_MODEL,
     ANTHROPIC_API_KEY: userConfig.ANTHROPIC_API_KEY || existingConfig.ANTHROPIC_API_KEY,
     ANTHROPIC_MODEL: userConfig.ANTHROPIC_MODEL || existingConfig.ANTHROPIC_MODEL,
+    GIGACHAT_API_KEY: userConfig.GIGACHAT_API_KEY || existingConfig.GIGACHAT_API_KEY,
+    GIGACHAT_MODEL: userConfig.GIGACHAT_MODEL || existingConfig.GIGACHAT_MODEL,
     OLLAMA_URL: userConfig.OLLAMA_URL || existingConfig.OLLAMA_URL,
     OLLAMA_MODEL: userConfig.OLLAMA_MODEL || existingConfig.OLLAMA_MODEL,
     CUSTOM_LLM_URL: userConfig.CUSTOM_LLM_URL || existingConfig.CUSTOM_LLM_URL,

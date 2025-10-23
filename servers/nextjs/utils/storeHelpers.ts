@@ -58,6 +58,14 @@ export const hasValidLLMConfig = (llmConfig: LLMConfig) => {
     llmConfig.CUSTOM_MODEL !== null &&
     llmConfig.CUSTOM_MODEL !== undefined;
 
+  const isGigaChatConfigValid =
+    llmConfig.GIGACHAT_MODEL !== "" &&
+    llmConfig.GIGACHAT_MODEL !== null &&
+    llmConfig.GIGACHAT_MODEL !== undefined &&
+    llmConfig.GIGACHAT_API_KEY !== "" &&
+    llmConfig.GIGACHAT_API_KEY !== null &&
+    llmConfig.GIGACHAT_API_KEY !== undefined;
+
   const isImageConfigValid = () => {
     switch (llmConfig.IMAGE_PROVIDER) {
       case "pexels":
@@ -82,11 +90,13 @@ export const hasValidLLMConfig = (llmConfig: LLMConfig) => {
         ? isGoogleConfigValid
         : llmConfig.LLM === "anthropic"
           ? isAnthropicConfigValid
-          : llmConfig.LLM === "ollama"
-            ? isOllamaConfigValid
-            : llmConfig.LLM === "custom"
-              ? isCustomConfigValid
-              : false;
+          : llmConfig.LLM === "gigachat"
+            ? isGigaChatConfigValid
+            : llmConfig.LLM === "ollama"
+              ? isOllamaConfigValid
+              : llmConfig.LLM === "custom"
+                ? isCustomConfigValid
+                : false;
 
   return isLLMConfigValid && isImageConfigValid();
 };

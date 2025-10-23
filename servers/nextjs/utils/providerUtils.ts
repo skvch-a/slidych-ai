@@ -34,6 +34,8 @@ export const updateLLMConfig = (
     google_model: "GOOGLE_MODEL",
     anthropic_api_key: "ANTHROPIC_API_KEY",
     anthropic_model: "ANTHROPIC_MODEL",
+    gigachat_api_key: "GIGACHAT_API_KEY",
+    gigachat_model: "GIGACHAT_MODEL",
     ollama_url: "OLLAMA_URL",
     ollama_model: "OLLAMA_MODEL",
     custom_llm_url: "CUSTOM_LLM_URL",

@@ -88,6 +88,11 @@ export const LLM_PROVIDERS: Record<string, LLMProviderOption> = {
     label: "Anthropic",
     description: "Anthropic's Claude models",
   },
+  gigachat: {
+    value: "gigachat",
+    label: "GigaChat",
+    description: "GigaChat от Сбера",
+  },
   ollama: {
     value: "ollama",
     label: "Ollama",

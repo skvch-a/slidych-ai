@@ -5,6 +5,7 @@ from api.v1.ppt.endpoints.presentation import PRESENTATION_ROUTER
 from api.v1.ppt.endpoints.anthropic import ANTHROPIC_ROUTER
 from api.v1.ppt.endpoints.google import GOOGLE_ROUTER
 from api.v1.ppt.endpoints.openai import OPENAI_ROUTER
+from api.v1.ppt.endpoints.gigachat import GIGACHAT_ROUTER
 from api.v1.ppt.endpoints.files import FILES_ROUTER
 from api.v1.ppt.endpoints.pptx_slides import PPTX_SLIDES_ROUTER
 from api.v1.ppt.endpoints.pdf_slides import PDF_SLIDES_ROUTER
@@ -36,4 +37,5 @@ API_V1_PPT_ROUTER.include_router(PDF_SLIDES_ROUTER)
 API_V1_PPT_ROUTER.include_router(OPENAI_ROUTER)
 API_V1_PPT_ROUTER.include_router(ANTHROPIC_ROUTER)
 API_V1_PPT_ROUTER.include_router(GOOGLE_ROUTER)
+API_V1_PPT_ROUTER.include_router(GIGACHAT_ROUTER)
 API_V1_PPT_ROUTER.include_router(PPTX_FONTS_ROUTER)

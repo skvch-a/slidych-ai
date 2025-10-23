@@ -86,15 +86,45 @@ async def stream_outlines(
             ).to_string()
 
             presentation_outlines_text += chunk
+            
+        # Логируем полный ответ для отладки
+        print("=== Full response from AI ===")
+        print(presentation_outlines_text)
+        print("=============================")
+
+        # Проверяем, что ответ не пустой
+        if not presentation_outlines_text.strip():
+            raise ValueError("Empty response received from the AI")
 
         try:
-            presentation_outlines_json = dict(
-                dirtyjson.loads(presentation_outlines_text)
-            )
+            # Пробуем распарсить как чистый JSON
+            try:
+                presentation_outlines_json = json.loads(presentation_outlines_text)
+                print("Successfully parsed as standard JSON")
+            except json.JSONDecodeError as je:
+                print("Standard JSON parse failed, trying dirtyjson...")
+                # Если не получилось, пробуем dirtyjson
+                try:
+                    presentation_outlines_json = dict(dirtyjson.loads(presentation_outlines_text))
+                    print("Successfully parsed with dirtyjson")
+                except Exception as e:
+                    # Логируем ошибку для отладки
+                    print("=== Failed to parse response as JSON ===")
+                    print("Raw response length:", len(presentation_outlines_text))
+                    print("First 500 chars:", presentation_outlines_text[:500])
+                    print("Error:", str(e))
+                    print("=======================================")
+                    raise ValueError(f"Failed to parse AI response: {str(e)}")
+                    
+            if not isinstance(presentation_outlines_json, dict):
+                print("Response is not a dictionary:", type(presentation_outlines_json))
+                print("Content:", presentation_outlines_json)
+                raise ValueError("Expected a dictionary in the response")
+                
         except Exception as e:
             traceback.print_exc()
             yield SSEErrorResponse(
-                detail=f"Failed to generate presentation outlines. Please try again. {str(e)}",
+                detail=f"Failed to parse presentation outlines. The AI returned malformed data. Please try again. Error: {str(e)}",
             ).to_string()
             return
 

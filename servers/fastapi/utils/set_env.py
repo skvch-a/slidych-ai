@@ -87,3 +87,11 @@ def set_extended_reasoning_env(value):
 
 def set_web_grounding_env(value):
     os.environ["WEB_GROUNDING"] = value
+
+
+def set_gigachat_api_key_env(value):
+    os.environ["GIGACHAT_API_KEY"] = value
+
+
+def set_gigachat_model_env(value):
+    os.environ["GIGACHAT_MODEL"] = value

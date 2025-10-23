@@ -18,6 +18,7 @@ import GoogleConfig from "./GoogleConfig";
 import AnthropicConfig from "./AnthropicConfig";
 import OllamaConfig from "./OllamaConfig";
 import CustomConfig from "./CustomConfig";
+import GigaChatConfig from "./GigaChatConfig";
 import {
   updateLLMConfig,
   changeProvider as changeProviderUtil,
@@ -56,6 +57,8 @@ function getSelectedModelName(llmConfig: LLMConfig): string {
       return dashIfEmpty(llmConfig.GOOGLE_MODEL);
     case "openai":
       return dashIfEmpty(llmConfig.OPENAI_MODEL);
+    case "gigachat":
+      return dashIfEmpty(llmConfig.GIGACHAT_MODEL);
   }
   
   return "—";
@@ -87,12 +90,14 @@ export default function LLMProviderSelection({
       (llmConfig.LLM === "google" && !llmConfig.GOOGLE_MODEL) ||
       (llmConfig.LLM === "ollama" && !llmConfig.OLLAMA_MODEL) ||
       (llmConfig.LLM === "custom" && !llmConfig.CUSTOM_MODEL) ||
-      (llmConfig.LLM === "anthropic" && !llmConfig.ANTHROPIC_MODEL);
+      (llmConfig.LLM === "anthropic" && !llmConfig.ANTHROPIC_MODEL) ||
+      (llmConfig.LLM === "gigachat" && !llmConfig.GIGACHAT_MODEL);
 
     const needsApiKey =
       ((llmConfig.IMAGE_PROVIDER === "dall-e-3" || llmConfig.LLM === "openai") && !llmConfig.OPENAI_API_KEY) ||
       ((llmConfig.IMAGE_PROVIDER === "gemini_flash" || llmConfig.LLM === "google") && !llmConfig.GOOGLE_API_KEY) ||
       (llmConfig.LLM === "anthropic" && !llmConfig.ANTHROPIC_API_KEY) ||
+      (llmConfig.LLM === "gigachat" && !llmConfig.GIGACHAT_API_KEY) ||
       (llmConfig.IMAGE_PROVIDER === "pexels" && !llmConfig.PEXELS_API_KEY) ||
       (llmConfig.IMAGE_PROVIDER === "pixabay" && !llmConfig.PIXABAY_API_KEY);
 
@@ -153,10 +158,11 @@ export default function LLMProviderSelection({
           onValueChange={handleProviderChange}
           className="w-full"
         >
-          <TabsList className="grid w-full grid-cols-5 bg-transparent h-10">
+          <TabsList className="grid w-full grid-cols-6 bg-transparent h-10">
             <TabsTrigger value="openai">OpenAI</TabsTrigger>
             <TabsTrigger value="google">Google</TabsTrigger>
             <TabsTrigger value="anthropic">Anthropic</TabsTrigger>
+            <TabsTrigger value="gigachat">GigaChat</TabsTrigger>
             <TabsTrigger value="ollama">Ollama</TabsTrigger>
             <TabsTrigger value="custom">Custom</TabsTrigger>
           </TabsList>
@@ -198,6 +204,15 @@ export default function LLMProviderSelection({
               anthropicModel={llmConfig.ANTHROPIC_MODEL || ""}
               extendedReasoning={llmConfig.EXTENDED_REASONING || false}
               webGrounding={llmConfig.WEB_GROUNDING || false}
+              onInputChange={input_field_changed}
+            />
+          </TabsContent>
+
+          {/* GigaChat Content */}
+          <TabsContent value="gigachat" className="mt-6">
+            <GigaChatConfig
+              gigachatApiKey={llmConfig.GIGACHAT_API_KEY || ""}
+              gigachatModel={llmConfig.GIGACHAT_MODEL || ""}
               onInputChange={input_field_changed}
             />
           </TabsContent>

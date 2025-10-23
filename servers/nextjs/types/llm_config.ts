@@ -22,6 +22,10 @@ export interface LLMConfig {
   CUSTOM_LLM_API_KEY?: string;
   CUSTOM_MODEL?: string;
 
+  // GigaChat
+  GIGACHAT_API_KEY?: string;
+  GIGACHAT_MODEL?: string;
+
   // Image providers
   IMAGE_PROVIDER?: string;
   PEXELS_API_KEY?: string;

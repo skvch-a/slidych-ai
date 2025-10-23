@@ -1,5 +1,10 @@
+import json
+import re
+import traceback
 from datetime import datetime
 from typing import Optional, AsyncGenerator
+
+import dirtyjson
 from fastapi import HTTPException
 
 from models.llm_message import LLMSystemMessage, LLMUserMessage
@@ -84,6 +89,37 @@ def get_messages(
     ]
 
 
+def _parse_gigachat_response(raw_response: str) -> dict:
+    """Пытаемся преобразовать ответ GigaChat к ожидаемому JSON-формату."""
+
+    def _encode_content(match: re.Match[str]) -> str:
+        content = match.group("content")
+        return f'"content": {json.dumps(content)}'
+
+    triple_quote_pattern = re.compile(r'"content":\s*"""(?P<content>.*?)"""', re.DOTALL)
+
+    sanitized = triple_quote_pattern.sub(_encode_content, raw_response)
+
+    try:
+        parsed = dirtyjson.loads(sanitized)
+        if isinstance(parsed, dict) and parsed.get("slides"):
+            return parsed
+    except Exception:
+        pass
+
+    # Фолбэк: извлекаем только содержимое слайдов
+    slides = []
+    for match in triple_quote_pattern.finditer(raw_response):
+        content = match.group("content").strip()
+        if content:
+            slides.append({"content": content})
+
+    if slides:
+        return {"slides": slides}
+
+    raise ValueError("GigaChat response does not contain slides")
+
+
 async def generate_ppt_outline(
     content: str,
     n_slides: int,
@@ -119,26 +155,63 @@ async def generate_ppt_outline(
         # print("--- END DEBUG ---\n")
 
     try:
+        is_gigachat = "gigachat" in model.lower()
+
+        print(f"Using model: {model}, is_gigachat: {is_gigachat}")
+
+        messages = get_messages(
+            content,
+            n_slides,
+            language,
+            additional_context,
+            tone,
+            verbosity,
+            instructions,
+            include_title_slide,
+        )
+
+        print("=== Prompt Messages ===")
+        for msg in messages:
+            preview = msg.content[:200]
+            suffix = "..." if len(msg.content) > 200 else ""
+            print(f"{msg.role.upper()}: {preview}{suffix}")
+        print("=====================")
+
+        response_schema = response_model.model_json_schema()
+        print(f"Response schema: {json.dumps(response_schema, indent=2)[:500]}...")
+
+        response_text = ""
         async for chunk in client.stream_structured(
-            model,
-            get_messages(
-                content,
-                n_slides,
-                language,
-                additional_context,
-                tone,
-                verbosity,
-                instructions,
-                include_title_slide,
-            ),
-            response_model.model_json_schema(),
-            strict=True,
+            model=model,
+            messages=messages,
+            response_format=response_schema,
+            strict=not is_gigachat,
             tools=(
                 [SearchWebTool]
                 if (client.enable_web_grounding() and web_search)
                 else None
             ),
         ):
-            yield chunk
+            if is_gigachat:
+                response_text += chunk
+            else:
+                response_text += chunk
+                yield chunk
+
+        print(f"=== Full response from {model} ===")
+        print(response_text)
+        print("================================")
+
+        if is_gigachat:
+            try:
+                parsed_response = _parse_gigachat_response(response_text)
+                normalized_text = json.dumps(parsed_response, ensure_ascii=False)
+                yield normalized_text
+            except Exception as parse_error:
+                print(f"Failed to parse GigaChat response: {parse_error}")
+                raise
+
     except Exception as e:
+        print(f"Error in generate_ppt_outline: {str(e)}")
+        traceback.print_exc()
         yield handle_llm_client_exceptions(e)

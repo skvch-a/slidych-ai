@@ -26,6 +26,10 @@ class UserConfig(BaseModel):
     CUSTOM_LLM_API_KEY: Optional[str] = None
     CUSTOM_MODEL: Optional[str] = None
 
+    # GigaChat
+    GIGACHAT_API_KEY: Optional[str] = None
+    GIGACHAT_MODEL: Optional[str] = None
+
     # Image Provider
     IMAGE_PROVIDER: Optional[str] = None
     PEXELS_API_KEY: Optional[str] = None
