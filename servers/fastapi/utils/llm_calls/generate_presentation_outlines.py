@@ -102,22 +102,21 @@ async def generate_ppt_outline(
 
     additional_context = ''
     if retriever:
-        # --- НАЧАЛО БЛОКА ОТЛАДКИ 1 ---
-        print("\n--- DEBUG: RAG in generate_ppt_outline ---")
-        print(f"Invoking retriever for main content: '{content[:100]}...'")
+        # print("\n--- DEBUG: RAG in generate_ppt_outline ---")
+        # print(f"Invoking retriever for main content: '{content[:100]}...'")
         try:
             relevant_docs = await retriever.ainvoke(content)
             print(f"Retriever returned {len(relevant_docs)} documents.")
-            for i, doc in enumerate(relevant_docs):
-                text = doc.page_content[:150].replace('\n', ' ')
-                print(f"  - Doc {i + 1} content: {text}...")
+            # for i, doc in enumerate(relevant_docs):
+            #     text = doc.page_content[:150].replace('\n', ' ')
+            #     print(f"  - Doc {i + 1} content: {text}...")
 
             additional_context = "\n\n---\n\n".join([doc.page_content for doc in relevant_docs])
             print("Total context length:", len(additional_context))
         except Exception as e:
             print(f"ERROR during retriever.ainvoke in generate_ppt_outline: {e}")
             relevant_docs = []  # Продолжаем без контекста в случае ошибки
-        print("--- END DEBUG ---\n")
+        # print("--- END DEBUG ---\n")
 
     try:
         async for chunk in client.stream_structured(

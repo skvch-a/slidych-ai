@@ -626,21 +626,21 @@ class LLMClient:
                 max_output_tokens=max_tokens,
             ),
         )
-        from datetime import datetime
-        try:
-            debug_payload = {
-                "model": model,
-                "messages": [msg.model_dump(mode='json') for msg in messages],
-                "config_sent_to_google": {
-                    "response_json_schema": response_format,  # Самое важное поле для отладки
-                }
-            }
-            filepath = f"google_request_debug_{datetime.now().strftime('%Y%m%d_%H%M%S_%f')}.json"
-            with open(filepath, "w", encoding="utf-8") as f:
-                json.dump(debug_payload, f, indent=2, ensure_ascii=False)
-            print(f"DEBUG: Saved Google API request details to '{filepath}'")
-        except Exception as e:
-            print(f"DEBUG: Failed to save debug JSON file: {e}")
+        # from datetime import datetime
+        # try:
+        #     debug_payload = {
+        #         "model": model,
+        #         "messages": [msg.model_dump(mode='json') for msg in messages],
+        #         "config_sent_to_google": {
+        #             "response_json_schema": response_format,  # Самое важное поле для отладки
+        #         }
+        #     }
+        #     filepath = f"google_request_debug_{datetime.now().strftime('%Y%m%d_%H%M%S_%f')}.json"
+        #     with open(filepath, "w", encoding="utf-8") as f:
+        #         json.dump(debug_payload, f, indent=2, ensure_ascii=False)
+        #     print(f"DEBUG: Saved Google API request details to '{filepath}'")
+        # except Exception as e:
+        #     print(f"DEBUG: Failed to save debug JSON file: {e}")
 
         content = response.candidates[0].content
         response_parts = content.parts

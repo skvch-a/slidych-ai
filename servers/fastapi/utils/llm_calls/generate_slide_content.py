@@ -66,7 +66,6 @@ def get_system_prompt(
 
 
 def get_user_prompt(outline: str, language: str, slide_context: str):
-    print('slide_context: ', slide_context)
     return f"""
         ## Current Date and Time
         {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
@@ -118,24 +117,22 @@ async def get_slide_content_from_type_and_outline(
 
     slide_context = ""
     if retriever:
-        # --- НАЧАЛО БЛОКА ОТЛАДКИ 2 ---
-        print("\n--- DEBUG: RAG in get_slide_content_from_type_and_outline ---")
-        text = outline.content[:100].replace('\n', ' ')
-        print(f"Invoking retriever for slide outline: '{text}...'")
+        # print("\n--- DEBUG: RAG in get_slide_content_from_type_and_outline ---")
+        # text = outline.content[:100].replace('\n', ' ')
+        # print(f"Invoking retriever for slide outline: '{text}...'")
         try:
             relevant_docs = await retriever.ainvoke(outline.content)
-            print(f"Retriever returned {len(relevant_docs)} documents for this slide.")
-            for i, doc in enumerate(relevant_docs):
-                text = doc.page_content[:150].replace('\n', ' ')
-                print(f"  - Doc {i + 1} content: {text}...")
+            # print(f"Retriever returned {len(relevant_docs)} documents for this slide.")
+            # for i, doc in enumerate(relevant_docs):
+            #     text = doc.page_content[:150].replace('\n', ' ')
+            #     print(f"  - Doc {i + 1} content: {text}...")
 
             slide_context = "\n\n---\n\n".join([doc.page_content for doc in relevant_docs])
             print("Total slide context length:", len(slide_context))
         except Exception as e:
             print(f"ERROR during retriever.ainvoke in get_slide_content: {e}")
             relevant_docs = []
-        print("--- END DEBUG ---\n")
-        # --- КОНЕЦ БЛОКА ОТЛАДКИ 2 ---
+        # print("--- END DEBUG ---\n")
 
     response_schema = remove_fields_from_schema(
         slide_layout.json_schema, ["__image_url__", "__icon_url__"]
