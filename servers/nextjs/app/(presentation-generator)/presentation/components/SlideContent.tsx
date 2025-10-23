@@ -201,7 +201,7 @@ const SlideContent = ({ slide, index, presentationId }: SlideContentProps) => {
                 <PopoverTrigger>
                   <ToolTip content="Обновить слайд с помощью ИИ">
                     <div
-                      className={`p-2 group-hover:scale-105 rounded-lg bg-[#5141e5] hover:shadow-md transition-all duration-300 cursor-pointer shadow-md `}
+                      className={`p-2 group-hover:scale-105 rounded-lg bg-[#003174] hover:shadow-md transition-all duration-300 cursor-pointer shadow-md `}
                     >
                       <WandSparkles className="w-4 sm:w-5 h-4 sm:h-5 text-white" />
                     </div>

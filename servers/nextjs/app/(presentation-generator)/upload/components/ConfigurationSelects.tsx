@@ -361,7 +361,7 @@ export function ConfigurationSelects({
 
           <DialogFooter>
             <Button variant="outline" onClick={() => handleOpenAdvancedChange(false)}>Отмена</Button>
-            <Button onClick={handleSaveAdvanced} className="bg-[#5141e5] text-white hover:bg-[#5141e5]/90">Сохранить</Button>
+            <Button onClick={handleSaveAdvanced} className="bg-[#003174] text-white hover:bg-[#003174]/90">Сохранить</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

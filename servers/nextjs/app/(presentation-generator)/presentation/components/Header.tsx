@@ -174,7 +174,7 @@ const Header = ({
           handleExportPptx();
         }}
         variant="ghost"
-        className={`w-full flex justify-start text-[#5146E5] ${mobile ? "bg-white py-6" : ""}`}
+        className={`w-full flex justify-start text-[#003174] ${mobile ? "bg-white py-6" : ""}`}
       >
         <Image src={PPTXIMAGE} alt="pptx export" width={30} height={30} />
         Экспорт в формате PPTX
@@ -233,7 +233,7 @@ const Header = ({
       }} className="hidden lg:block relative ">
         <Popover open={open} onOpenChange={setOpen} >
           <PopoverTrigger asChild>
-            <Button className={`border py-5 text-[#5146E5] font-bold rounded-[32px] transition-all duration-500 hover:border hover:bg-[#5146E5] hover:text-white w-full ${mobile ? "" : "bg-white"}`}>
+            <Button className={`border py-5 text-[#003174] font-bold rounded-[32px] transition-all duration-500 hover:border hover:bg-[#003174] hover:text-white w-full ${mobile ? "" : "bg-white"}`}>
               <SquareArrowOutUpRight className="w-4 h-4 mr-1" />
               Экспорт
             </Button>
@@ -261,7 +261,7 @@ const Header = ({
       />
       <div
 
-        className="bg-[#5146E5] w-full shadow-lg sticky top-0 ">
+        className="bg-[#003174] w-full shadow-lg sticky top-0 ">
 
         <Announcement />
         <Wrapper className="flex items-center justify-between py-1">

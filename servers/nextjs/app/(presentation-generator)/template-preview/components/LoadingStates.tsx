@@ -23,7 +23,7 @@ const LoadingStates: React.FC<LoadingStatesProps> = ({ type, message }) => {
 
             <div className="space-y-2">
               <h3 className="text-xl font-semibold text-gray-900">
-                Loading Layouts
+                Загружаем шаблоны...
               </h3>
               <p className="text-gray-600">
                 {message || "Discovering and loading layout components..."}

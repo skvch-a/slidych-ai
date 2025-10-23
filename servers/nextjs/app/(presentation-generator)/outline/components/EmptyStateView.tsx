@@ -26,12 +26,8 @@ const EmptyStateView: React.FC = () => {
                     {/* Content */}
                     <div className="space-y-4">
                         <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 font-instrument_sans">
-                            No Presentation Found
+                            Презентации не найдено
                         </h1>
-                        <p className="text-lg text-gray-600 max-w-md mx-auto leading-relaxed">
-                            It looks like the presentation you are looking for is not found.
-                            Let's create a brand new presentation!
-                        </p>
                     </div>
 
                     {/* Action Button */}

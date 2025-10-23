@@ -518,3 +518,9 @@ thead {
 .token.entity {
   cursor: help;
 }
+
+::selection {
+  background: #003174;
+  color: white;
+  text-shadow: none;
+}
