@@ -124,28 +124,28 @@ const SidePanel = ({
       {/* Desktop Toggle Button - Always visible when panel is closed */}
       {!isOpen && (
         <div className="hidden xl:block fixed left-4 top-1/2 -translate-y-1/2 z-50">
-          <ToolTip content="Open Panel">
+
             <Button
               onClick={() => setIsOpen(true)}
               className="bg-white hover:bg-gray-50 shadow-lg"
             >
               <PanelRightOpen className="text-black" size={20} />
             </Button>
-          </ToolTip>
+
         </div>
       )}
 
       {/* Mobile Toggle Button */}
       {!isMobilePanelOpen && (
         <div className="xl:hidden fixed left-4 bottom-4 z-50">
-          <ToolTip content="Show Panel">
+
             <Button
               onClick={() => setIsMobilePanelOpen(true)}
               className="bg-[#5146E5] text-white p-3 rounded-full shadow-lg"
             >
               <PanelRightOpen className="text-white" size={20} />
             </Button>
-          </ToolTip>
+
         </div>
       )}
 
@@ -161,7 +161,6 @@ const SidePanel = ({
         `}
       >
         <div
-
           className="min-w-[300px] bg-white max-w-[300px] h-[calc(100vh-120px)]  rounded-[20px] hide-scrollbar overflow-hidden slide-theme shadow-xl"
         >
           <div
@@ -169,7 +168,7 @@ const SidePanel = ({
           >
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center justify-start gap-4">
-                <ToolTip content="Image Preview">
+
                   <Button
                     className={`${active === "grid"
                       ? "bg-[#5141e5] hover:bg-[#4638c7]"
@@ -187,8 +186,8 @@ const SidePanel = ({
                       size={20}
                     />
                   </Button>
-                </ToolTip>
-                <ToolTip content="List Preview">
+
+
                   <Button
                     className={`${active === "list"
                       ? "bg-[#5141e5] hover:bg-[#4638c7]"
@@ -206,7 +205,7 @@ const SidePanel = ({
                       size={20}
                     />
                   </Button>
-                </ToolTip>
+
               </div>
               <X
                 onClick={handleClose}
@@ -232,7 +231,7 @@ const SidePanel = ({
                       className={`p-3 cursor-pointer rounded-lg slide-box`}
                     >
                       <span className="font-medium slide-title">
-                        Slide {index + 1}
+                        Слайд {index + 1}
                       </span>
                       <p className="text-sm slide-description">
                         {slide.content.title}

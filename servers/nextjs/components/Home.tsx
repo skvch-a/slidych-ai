@@ -77,7 +77,7 @@ export default function Home() {
           await handleModelDownload();
         }
       }
-      toast.info("Configuration saved successfully");
+      toast.info("Конфигурация успешно сохранена");
       setButtonState(prev => ({
         ...prev,
         isLoading: false,
@@ -88,7 +88,7 @@ export default function Home() {
       trackEvent(MixpanelEvent.Navigation, { from: pathname, to: "/upload" });
       router.push("/upload");
     } catch (error) {
-      toast.info(error instanceof Error ? error.message : "Failed to save configuration");
+      toast.info(error instanceof Error ? error.message : "Не удалось применить конфигурацию");
       setButtonState(prev => ({
         ...prev,
         isLoading: false,

@@ -34,9 +34,7 @@ export function PromptInput({
         className={`text-sm text-gray-500 font-inter font-medium ${showHint ? "opacity-100" : "opacity-0"
           }`}
       >
-        Для более точных результатов расскажите о Вашей презентации некоторые детали (смысловые части, стиль, ключевые моменты и т.д.)
-        Provide specific details about your presentation needs (e.g., topic,
-        style, key points) for more accurate results
+        Для более точных результатов расскажите о вашей презентации подробно (смысловые части, стиль, ключевые моменты и т.д.)
       </p>
     </div>
   );

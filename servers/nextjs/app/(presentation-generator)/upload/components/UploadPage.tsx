@@ -150,7 +150,7 @@ const UploadPage = () => {
   const handleDirectPresentationGeneration = async () => {
     setLoadingState({
       isLoading: true,
-      message: "Generating outlines...",
+      message: "Создаем набросок...",
       showProgress: true,
       duration: 30,
     });

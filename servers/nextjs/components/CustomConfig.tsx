@@ -102,7 +102,7 @@ export default function CustomConfig({
           <input
             type="text"
             required
-            placeholder="Enter your URL"
+            placeholder="Введите URL"
             className="w-full px-4 py-2.5 outline-none border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
             value={customLlmUrl}
             onChange={(e) => onUrlChange(e.target.value)}
@@ -119,7 +119,7 @@ export default function CustomConfig({
           <input
             type="text"
             required
-            placeholder="Enter your API Key"
+            placeholder="Введите ваш API ключ"
             className="w-full px-4 py-2.5 outline-none border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
             value={customLlmApiKey}
             onChange={(e) => onApiKeyChange(e.target.value)}

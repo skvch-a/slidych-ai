@@ -41,7 +41,7 @@ const EmptyStateView: React.FC = () => {
                             className="group bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-8 py-4 rounded-xl text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                         >
                             <Plus className="w-5 h-5 mr-2" />
-                            Create New Presentation
+                            Создать новою презентацию
                             <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-200" />
                         </Button>
                     </div>

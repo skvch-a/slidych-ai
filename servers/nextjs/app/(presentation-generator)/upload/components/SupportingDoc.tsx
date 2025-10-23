@@ -113,7 +113,7 @@ const SupportingDoc = ({ files, onFilesChange }: SupportingDocProps) => {
 
     return (
         <div className="w-full">
-            <h2 className="text-[#444] font-instrument_sans pt-4 text-lg mb-4">Документы для основы презентации</h2>
+            <h2 className="text-[#444] font-instrument_sans pt-4 text-lg mb-4">Документы для презентации</h2>
             <div
                 onClick={() => fileInputRef.current?.click()}
                 className={cn(

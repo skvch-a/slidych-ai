@@ -129,7 +129,6 @@ const PresentationPage: React.FC<PresentationPageProps> = ({
       </div>
 
       <Header presentation_id={presentation_id} currentSlide={selectedSlide} />
-      <Help />
 
       <div
         style={{
