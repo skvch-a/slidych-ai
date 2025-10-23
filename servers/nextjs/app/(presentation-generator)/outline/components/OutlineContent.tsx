@@ -137,7 +137,7 @@ const OutlineContent: React.FC<OutlineContentProps> = ({
                         disabled={isLoading || isStreaming}
                         className="w-full my-4 text-blue-600 border-blue-200"
                     >
-                        + Add Slide
+                        + Добавить слайд
                     </Button>
                 </div>
             )}

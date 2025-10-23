@@ -66,13 +66,13 @@ export default function GoogleConfig({
         setModelsChecked(true);
         onInputChange("models/gemini-2.5-flash", "google_model");
       } else {
-        console.error('Failed to fetch models');
+        console.error('Не удалось получить список моделей');
         setAvailableModels([]);
         setModelsChecked(true);
       }
     } catch (error) {
-      console.error('Error fetching models:', error);
-      toast.error('Error fetching models');
+      console.error('Ошибка во время получения списка моделей:', error);
+      toast.error('Ошибка во время получения списка моделей');
       setAvailableModels([]);
       setModelsChecked(true);
     } finally {
@@ -93,12 +93,12 @@ export default function GoogleConfig({
             value={googleApiKey}
             onChange={(e) => onApiKeyChange(e.target.value)}
             className="w-full px-4 py-2.5 outline-none border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
-            placeholder="Enter your API key"
+            placeholder="Введите свой API ключ"
           />
         </div>
         <p className="mt-2 text-sm text-gray-500 flex items-center gap-2">
           <span className="block w-1 h-1 rounded-full bg-gray-400"></span>
-          Your API key will be stored locally and never shared
+          Ваш API ключ будет сохранён локально и никогда не будет никому передан
         </p>
       </div>
 
@@ -116,10 +116,10 @@ export default function GoogleConfig({
             {modelsLoading ? (
               <div className="flex items-center justify-center gap-2">
                 <Loader2 className="w-4 h-4 animate-spin" />
-                Checking for models...
+                Проверка моделей...
               </div>
             ) : (
-              "Check for available models"
+              "Проверить доступные модели"
             )}
           </button>
         </div>
@@ -129,7 +129,7 @@ export default function GoogleConfig({
       {modelsChecked && availableModels.length === 0 && (
         <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
           <p className="text-sm text-yellow-800">
-            No models found. Please make sure your API key is valid and has access to Google models.
+            Модели не найдены. Пожалуйста, проверьте, валидный ли Ваш API ключ и имеет ли он доступ к списку моделей Google.
           </p>
         </div>
       )}
@@ -168,9 +168,9 @@ export default function GoogleConfig({
                 style={{ width: "var(--radix-popover-trigger-width)" }}
               >
                 <Command>
-                  <CommandInput placeholder="Search models..." />
+                  <CommandInput placeholder="Найти модель..." />
                   <CommandList>
-                    <CommandEmpty>No model found.</CommandEmpty>
+                    <CommandEmpty>Модели не найдены.</CommandEmpty>
                     <CommandGroup>
                       {availableModels.map((model, index) => (
                         <CommandItem
@@ -213,7 +213,7 @@ export default function GoogleConfig({
       <div>
         <div className="flex items-center justify-between mb-4 bg-green-50 p-2 rounded-sm">
           <label className="text-sm font-medium text-gray-700">
-            Enable Web Grounding
+            Включить функцию Web Grounding
           </label>
           <Switch
             checked={!!webGrounding}
@@ -222,7 +222,7 @@ export default function GoogleConfig({
         </div>
         <p className="mt-2 text-sm text-gray-500 flex items-center gap-2">
           <span className="block w-1 h-1 rounded-full bg-gray-400"></span>
-          If enabled, the model can use web search grounding when available.
+          Включите, чтобы модель могла искать информацию в Интернете при генерации ответа
         </p>
       </div>
     </div>

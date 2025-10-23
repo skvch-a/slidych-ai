@@ -216,7 +216,7 @@ const LayoutSelection: React.FC<LayoutSelectionProps> = ({
       <div>
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-lg font-semibold text-gray-900">
-            Custom AI Templates
+            Пользовательские шаблоны
           </h3>
         </div>
         {customGroups.length === 0 ? (

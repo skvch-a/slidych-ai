@@ -186,19 +186,7 @@ const GroupLayoutPreview = () => {
               className="flex items-center gap-2"
             >
               <ArrowLeft className="w-4 h-4" />
-              Back
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                trackEvent(MixpanelEvent.TemplatePreview_All_Groups_Button_Clicked, { pathname });
-                router.push("/template-preview");
-              }}
-              className="flex items-center gap-2"
-            >
-              <Home className="w-4 h-4" />
-              All Groups
+              Назад
             </Button>
              {slug.includes('custom-') && <button className=" border border-red-200 flex justify-center items-center gap-2 text-red-700 px-4 py-1 rounded-md" onClick={() => {
             trackEvent(MixpanelEvent.TemplatePreview_Delete_Templates_Button_Clicked, { pathname });

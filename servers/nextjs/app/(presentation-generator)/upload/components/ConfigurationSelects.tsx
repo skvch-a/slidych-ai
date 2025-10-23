@@ -40,6 +40,24 @@ type SlideOption = "5" | "8" | "9" | "10" | "11" | "12" | "13" | "14" | "15" | "
 // Constants
 const SLIDE_OPTIONS: SlideOption[] = ["5", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"];
 
+function calculateSlidesTitle(slidesCount: string | null): string {
+  if (!slidesCount)
+    return "слайдов";
+
+  const num = parseInt(slidesCount);
+  const shouldEndInOv = ["11", "12", "13", "14", "15", "16", "17", "18", "19"];
+  if (shouldEndInOv.some(n => slidesCount.endsWith(n)))
+    return "слайдов";
+  
+  if (slidesCount.endsWith("1"))
+    return "слайд";
+
+  const shouldEndInA = ["2", "3", "4"];
+  if (shouldEndInA.some(n => slidesCount.endsWith(n)))
+    return "слайда";
+
+  return "слайдов";
+}
 /**
  * Renders a select component for slide count
  */
@@ -104,14 +122,14 @@ const SlideCountSelect: React.FC<{
               placeholder="--"
               className="h-8 w-16 px-2 text-sm"
             />
-            <span className="text-sm font-medium">slides</span>
+            <span className="text-sm font-medium">{calculateSlidesTitle(value)}</span>
           </div>
         </div>
 
         {/* Hidden item to allow SelectValue to render custom selection */}
         {value && !SLIDE_OPTIONS.includes(value as SlideOption) && (
           <SelectItem value={value} className="hidden">
-            {value} slides
+            {value} {calculateSlidesTitle(value)}
           </SelectItem>
         )}
 
@@ -122,7 +140,7 @@ const SlideCountSelect: React.FC<{
             className="font-instrument_sans text-sm font-medium"
             role="option"
           >
-            {option} slides
+            {option} слайдов
           </SelectItem>
         ))}
       </SelectContent>
@@ -158,7 +176,7 @@ const LanguageSelect: React.FC<{
     <PopoverContent className="w-[300px] p-0" align="end">
       <Command>
         <CommandInput
-          placeholder="Search language..."
+          placeholder="Поиск языка..."
           className="font-instrument_sans"
         />
         <CommandList>
@@ -243,11 +261,9 @@ export function ConfigurationSelects({
         open={openLanguage}
         onOpenChange={setOpenLanguage}
       />
-      <ToolTip content="Advanced settings">
+      <ToolTip content="Расширенные настройки">
 
       <button
-        aria-label="Advanced settings"
-        title="Advanced settings"
         type="button"
         onClick={() => handleOpenAdvancedChange(true)}
         className="ml-auto flex items-center gap-2 text-sm underline underline-offset-4  bg-blue-100 hover:bg-blue-100 border-blue-200 focus-visible:ring-blue-300 border-none p-2 rounded-md font-instrument_sans font-medium"
@@ -259,14 +275,14 @@ export function ConfigurationSelects({
       <Dialog open={openAdvanced} onOpenChange={handleOpenAdvancedChange}>
         <DialogContent className="max-w-2xl font-instrument_sans">
           <DialogHeader>
-            <DialogTitle>Advanced settings</DialogTitle>
+            <DialogTitle>Расширенные настройки</DialogTitle>
           </DialogHeader>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             {/* Tone */}
             <div className="w-full flex flex-col gap-2">
-              <label className="text-sm font-semibold text-gray-700">Tone</label>
-              <p className="text-xs text-gray-500">Controls the writing style (e.g., casual, professional, funny).</p>
+              <label className="text-sm font-semibold text-gray-700">Тон</label>
+              <p className="text-xs text-gray-500">Определяет стиль текста.</p>
               <Select
                 value={advancedDraft.tone}
                 onValueChange={(value) => setAdvancedDraft((prev) => ({ ...prev, tone: value as ToneType }))}
@@ -286,8 +302,8 @@ export function ConfigurationSelects({
 
             {/* Verbosity */}
             <div className="w-full flex flex-col gap-2">
-              <label className="text-sm font-semibold text-gray-700">Verbosity</label>
-              <p className="text-xs text-gray-500">Controls how detailed slide descriptions are: concise, standard, or text-heavy.</p>
+              <label className="text-sm font-semibold text-gray-700">Подробность</label>
+              <p className="text-xs text-gray-500">Определяет количество текста на слайде.</p>
               <Select
                 value={advancedDraft.verbosity}
                 onValueChange={(value) => setAdvancedDraft((prev) => ({ ...prev, verbosity: value as VerbosityType }))}
@@ -310,52 +326,42 @@ export function ConfigurationSelects({
             {/* Toggles */}
             <div className="w-full flex flex-col gap-2 p-3 rounded-md bg-blue-100 border-blue-200">
               <div className="flex items-center justify-between">
-                <label className="text-sm font-semibold text-gray-700">Include table of contents</label>
+                <label className="text-sm font-semibold text-gray-700">Добавить оглавление</label>
                 <Switch
                   checked={advancedDraft.includeTableOfContents}
                   onCheckedChange={(checked) => setAdvancedDraft((prev) => ({ ...prev, includeTableOfContents: checked }))}
                 />
               </div>
-              <p className="text-xs text-gray-600">Add an index slide summarizing sections (requires 3+ slides).</p>
+              <p className="text-xs text-gray-600">Добавляет слайд с оглавлением (требуется 3+ слайда).</p>
             </div>
             <div className="w-full flex flex-col gap-2 p-3 rounded-md bg-blue-100 border-blue-200">
               <div className="flex items-center justify-between">
-                <label className="text-sm font-semibold text-gray-700">Title slide</label>
+                <label className="text-sm font-semibold text-gray-700">Добавить титульный слайд</label>
                 <Switch
                   checked={advancedDraft.includeTitleSlide}
                   onCheckedChange={(checked) => setAdvancedDraft((prev) => ({ ...prev, includeTitleSlide: checked }))}
                 />
               </div>
-              <p className="text-xs text-gray-600">Include a title slide as the first slide.</p>
-            </div>
-            <div className="w-full flex flex-col gap-2 p-3 rounded-md bg-blue-100 border-blue-200">
-              <div className="flex items-center justify-between">
-                <label className="text-sm font-semibold text-gray-700">Web search</label>
-                <Switch
-                  checked={advancedDraft.webSearch}
-                  onCheckedChange={(checked) => setAdvancedDraft((prev) => ({ ...prev, webSearch: checked }))}
-                />
-              </div>
-              <p className="text-xs text-gray-600">Allow the model to consult the web for fresher facts.</p>
+              <p className="text-xs text-gray-600">Сделать первый слайд титульным.</p>
             </div>
 
             {/* Instructions */}
             <div className="w-full sm:col-span-2 flex flex-col gap-2">
-              <label className="text-sm font-semibold text-gray-700">Instructions</label>
-              <p className="text-xs text-gray-500">Optional guidance for the AI. These override defaults except format constraints.</p>
+              <label className="text-sm font-semibold text-gray-700">Инструкции</label>
+              <p className="text-xs text-gray-500">Дополнительные указания для ИИ.</p>
               <Textarea
                 value={advancedDraft.instructions}
                 rows={4}
                 onChange={(e) => setAdvancedDraft((prev) => ({ ...prev, instructions: e.target.value }))}
-                placeholder="Example: Focus on enterprise buyers, emphasize ROI and security compliance. Keep slides data-driven, avoid jargon, and include a short call-to-action on the final slide."
+                placeholder="Пример: Сосредоточьтесь на корпоративных покупателях, подчеркните окупаемость инвестиций и соответствие требованиям безопасности. Избегайте жаргона и включите короткий призыв к действию на последнем слайде."
                 className="py-2 px-3 border-2 font-medium text-sm min-h-[100px] max-h-[200px] border-blue-200 focus-visible:ring-offset-0 focus-visible:ring-blue-300"
               />
             </div>
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => handleOpenAdvancedChange(false)}>Cancel</Button>
-            <Button onClick={handleSaveAdvanced} className="bg-[#5141e5] text-white hover:bg-[#5141e5]/90">Save</Button>
+            <Button variant="outline" onClick={() => handleOpenAdvancedChange(false)}>Отмена</Button>
+            <Button onClick={handleSaveAdvanced} className="bg-[#003174] text-white hover:bg-[#003174]/90">Сохранить</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

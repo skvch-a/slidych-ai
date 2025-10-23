@@ -28,47 +28,47 @@ export const IMAGE_PROVIDERS: Record<string, ImageProviderOption> = {
   pexels: {
     value: "pexels",
     label: "Pexels",
-    description: "Free stock photo and video platform",
+    description: "Бесплатная платформа со стоковыми изображениями и видео",
     icon: "/icons/pexels.png",
     requiresApiKey: true,
     apiKeyField: "PEXELS_API_KEY",
-    apiKeyFieldLabel: "Pexels API Key"
+    apiKeyFieldLabel: "Pexels API ключ"
   },
   pixabay: {
     value: "pixabay",
     label: "Pixabay",
-    description: "Free images and videos",
+    description: "Бесплатная платформа для поиска и скачивания изображений, видео и музыки",
     icon: "/icons/pixabay.png",
     requiresApiKey: true,
     apiKeyField: "PIXABAY_API_KEY",
-    apiKeyFieldLabel: "Pixabay API Key"
+    apiKeyFieldLabel: "Pixabay API ключ"
   },
   "dall-e-3": {
     value: "dall-e-3",
     label: "DALL-E 3",
-    description: "OpenAI's latest image generation model",
+    description: "Последняя модель OpenAI для генерации изображений",
     icon: "/icons/dall-e.png",
     requiresApiKey: true,
     apiKeyField: "OPENAI_API_KEY",
-    apiKeyFieldLabel: "OpenAI API Key"
+    apiKeyFieldLabel: "OpenAI API ключ"
   },
   gemini_flash: {
     value: "gemini_flash",
     label: "Gemini Flash",
-    description: "Google's primary image generation model",
+    description: "Основная модель для генерации изображений от Google",
     icon: "/icons/google.png",
     requiresApiKey: true,
     apiKeyField: "GOOGLE_API_KEY",
-    apiKeyFieldLabel: "Google API Key"
+    apiKeyFieldLabel: "Google API ключ"
   },
   Kandinsky: {
     value: "Kandinsky",
     label: "Kandinsky",
-    description: "Image generation model by Sber",
+    description: "Модель для генерации изображений от компании СБЕР",
     icon: "/icons/kandinsky.png",
     requiresApiKey: true,
     apiKeyField: "KANDINSKY_API_KEY",
-    apiKeyFieldLabel: "Kandinsky API Key"
+    apiKeyFieldLabel: "Kandinsky API ключ"
   },
 };
 

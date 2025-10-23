@@ -276,7 +276,7 @@ const DocumentsPreviewPage: React.FC = () => {
             <ToolTip content="Open Panel">
               <Button
                 onClick={() => setIsOpen(true)}
-                className="bg-[#5146E5] text-white p-3 shadow-lg"
+                className="bg-[#003174] text-white p-3 shadow-lg"
               >
                 <PanelRightOpen className="text-white" size={20} />
               </Button>
