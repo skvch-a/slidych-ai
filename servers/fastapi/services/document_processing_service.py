@@ -32,9 +32,6 @@ class DocumentProcessingService:
             cache_folder='chroma/models'
         )
 
-        # Инициализируем "разделитель" текста.
-        # RecursiveCharacterTextSplitter - умный сплиттер, который пытается делить текст
-        # по семантическим границам (параграфы, предложения, слова).
         self.text_splitter = RecursiveCharacterTextSplitter(
             chunk_size=1000,  # Максимальный размер одного чанка в символах.
             chunk_overlap=200,  # Количество символов, которыми соседние чанки будут пересекаться.
@@ -102,9 +99,6 @@ class DocumentProcessingService:
             embedding_function=self.embedding_function,
         )
 
-        # Превращаем хранилище в retriever.
-        # `search_kwargs={"k": 5}` означает, что при каждом поиске он будет возвращать
-        # 5 самых релевантных документов. Это значение можно настраивать.
         return vectorstore.as_retriever(search_kwargs={"k": 5})
 
     def cleanup(self, presentation_id: uuid.UUID):
