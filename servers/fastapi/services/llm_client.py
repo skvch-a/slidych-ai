@@ -15,6 +15,8 @@ from google.genai.types import (
     ToolConfig as GoogleToolConfig,
     FunctionCallingConfig as GoogleFunctionCallingConfig,
     FunctionCallingConfigMode as GoogleFunctionCallingConfigMode,
+    HarmCategory,
+    HarmBlockThreshold,
 )
 from google.genai.types import Tool as GoogleTool
 from anthropic import AsyncAnthropic
@@ -255,6 +257,13 @@ class LLMClient:
         if tools:
             google_tools = [GoogleTool(function_declarations=[tool]) for tool in tools]
 
+        safety_settings = {
+            HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
+            HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
+            HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
+            HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
+        }
+
         response = await asyncio.to_thread(
             client.models.generate_content,
             model=model,
@@ -265,6 +274,7 @@ class LLMClient:
                 response_mime_type="text/plain",
                 max_output_tokens=max_tokens,
             ),
+            safety_settings=safety_settings
         )
 
         content = response.candidates[0].content
@@ -587,6 +597,13 @@ class LLMClient:
                 )
             )
 
+        safety_settings = {
+            HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
+            HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
+            HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
+            HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
+        }
+
         response = await asyncio.to_thread(
             client.models.generate_content,
             model=model,
@@ -602,12 +619,28 @@ class LLMClient:
                     if tools
                     else None
                 ),
+                safety_settings=safety_settings,
                 system_instruction=self._get_system_prompt(messages),
                 response_mime_type="application/json" if not tools else None,
                 response_json_schema=response_format if not tools else None,
                 max_output_tokens=max_tokens,
             ),
         )
+        from datetime import datetime
+        try:
+            debug_payload = {
+                "model": model,
+                "messages": [msg.model_dump(mode='json') for msg in messages],
+                "config_sent_to_google": {
+                    "response_json_schema": response_format,  # Самое важное поле для отладки
+                }
+            }
+            filepath = f"google_request_debug_{datetime.now().strftime('%Y%m%d_%H%M%S_%f')}.json"
+            with open(filepath, "w", encoding="utf-8") as f:
+                json.dump(debug_payload, f, indent=2, ensure_ascii=False)
+            print(f"DEBUG: Saved Google API request details to '{filepath}'")
+        except Exception as e:
+            print(f"DEBUG: Failed to save debug JSON file: {e}")
 
         content = response.candidates[0].content
         response_parts = content.parts

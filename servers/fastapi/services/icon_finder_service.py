@@ -3,14 +3,13 @@ import json
 import chromadb
 from chromadb.config import Settings
 from chromadb.utils.embedding_functions import ONNXMiniLM_L6_V2
+from .db_clients import chroma_client
 
 
 class IconFinderService:
     def __init__(self):
         self.collection_name = "icons"
-        self.client = chromadb.PersistentClient(
-            path="chroma", settings=Settings(anonymized_telemetry=False)
-        )
+        self.client = chroma_client
         print("Initializing icons collection...")
         self._initialize_icons_collection()
         print("Icons collection initialized.")

@@ -7,6 +7,7 @@ from services.llm_client import LLMClient
 from utils.llm_client_error_handler import handle_llm_client_exceptions
 from utils.llm_provider import get_model
 from utils.schema_utils import add_field_in_schema, remove_fields_from_schema
+from langchain_core.retrievers import BaseRetriever
 
 
 def get_system_prompt(
@@ -28,7 +29,7 @@ def get_system_prompt(
 
         # Steps
         1. Analyze the outline.
-        2. Generate structured slide based on the outline.
+        2. Generate structured slide content based on BOTH the outline and the context. Use facts and figures from the context.
         3. Generate speaker note that is simple, clear, concise and to the point.
 
         # Notes
@@ -64,7 +65,8 @@ def get_system_prompt(
     """
 
 
-def get_user_prompt(outline: str, language: str):
+def get_user_prompt(outline: str, language: str, slide_context: str):
+    print('slide_context: ', slide_context)
     return f"""
         ## Current Date and Time
         {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
@@ -74,6 +76,9 @@ def get_user_prompt(outline: str, language: str):
 
         ## Slide Content Language
         {language}
+        
+        ## Additional Context for this slide
+        {slide_context or "No additional context provided."}
 
         ## Slide Outline
         {outline}
@@ -83,6 +88,7 @@ def get_user_prompt(outline: str, language: str):
 def get_messages(
     outline: str,
     language: str,
+    slide_context: str,
     tone: Optional[str] = None,
     verbosity: Optional[str] = None,
     instructions: Optional[str] = None,
@@ -93,7 +99,7 @@ def get_messages(
             content=get_system_prompt(tone, verbosity, instructions),
         ),
         LLMUserMessage(
-            content=get_user_prompt(outline, language),
+            content=get_user_prompt(outline, language, slide_context),
         ),
     ]
 
@@ -102,12 +108,34 @@ async def get_slide_content_from_type_and_outline(
     slide_layout: SlideLayoutModel,
     outline: SlideOutlineModel,
     language: str,
+    retriever: Optional[BaseRetriever],
     tone: Optional[str] = None,
     verbosity: Optional[str] = None,
     instructions: Optional[str] = None,
 ):
     client = LLMClient()
     model = get_model()
+
+    slide_context = ""
+    if retriever:
+        # --- НАЧАЛО БЛОКА ОТЛАДКИ 2 ---
+        print("\n--- DEBUG: RAG in get_slide_content_from_type_and_outline ---")
+        text = outline.content[:100].replace('\n', ' ')
+        print(f"Invoking retriever for slide outline: '{text}...'")
+        try:
+            relevant_docs = await retriever.ainvoke(outline.content)
+            print(f"Retriever returned {len(relevant_docs)} documents for this slide.")
+            for i, doc in enumerate(relevant_docs):
+                text = doc.page_content[:150].replace('\n', ' ')
+                print(f"  - Doc {i + 1} content: {text}...")
+
+            slide_context = "\n\n---\n\n".join([doc.page_content for doc in relevant_docs])
+            print("Total slide context length:", len(slide_context))
+        except Exception as e:
+            print(f"ERROR during retriever.ainvoke in get_slide_content: {e}")
+            relevant_docs = []
+        print("--- END DEBUG ---\n")
+        # --- КОНЕЦ БЛОКА ОТЛАДКИ 2 ---
 
     response_schema = remove_fields_from_schema(
         slide_layout.json_schema, ["__image_url__", "__icon_url__"]
@@ -131,6 +159,7 @@ async def get_slide_content_from_type_and_outline(
             messages=get_messages(
                 outline.content,
                 language,
+                slide_context,
                 tone,
                 verbosity,
                 instructions,

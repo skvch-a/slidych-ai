@@ -1,5 +1,6 @@
 from datetime import datetime
-from typing import Optional
+from typing import Optional, AsyncGenerator
+from fastapi import HTTPException
 
 from models.llm_message import LLMSystemMessage, LLMUserMessage
 from models.llm_tools import SearchWebTool
@@ -7,6 +8,7 @@ from services.llm_client import LLMClient
 from utils.get_dynamic_models import get_presentation_outline_model_with_n_slides
 from utils.llm_client_error_handler import handle_llm_client_exceptions
 from utils.llm_provider import get_model
+from langchain_core.retrievers import BaseRetriever
 
 
 def get_system_prompt(
@@ -86,17 +88,36 @@ async def generate_ppt_outline(
     content: str,
     n_slides: int,
     language: Optional[str] = None,
-    additional_context: Optional[str] = None,
+    retriever: Optional[BaseRetriever] = None,
     tone: Optional[str] = None,
     verbosity: Optional[str] = None,
     instructions: Optional[str] = None,
     include_title_slide: bool = True,
     web_search: bool = False,
-):
+) -> AsyncGenerator[str | HTTPException, None]:
+
     model = get_model()
     response_model = get_presentation_outline_model_with_n_slides(n_slides)
-
     client = LLMClient()
+
+    additional_context = ''
+    if retriever:
+        # --- НАЧАЛО БЛОКА ОТЛАДКИ 1 ---
+        print("\n--- DEBUG: RAG in generate_ppt_outline ---")
+        print(f"Invoking retriever for main content: '{content[:100]}...'")
+        try:
+            relevant_docs = await retriever.ainvoke(content)
+            print(f"Retriever returned {len(relevant_docs)} documents.")
+            for i, doc in enumerate(relevant_docs):
+                text = doc.page_content[:150].replace('\n', ' ')
+                print(f"  - Doc {i + 1} content: {text}...")
+
+            additional_context = "\n\n---\n\n".join([doc.page_content for doc in relevant_docs])
+            print("Total context length:", len(additional_context))
+        except Exception as e:
+            print(f"ERROR during retriever.ainvoke in generate_ppt_outline: {e}")
+            relevant_docs = []  # Продолжаем без контекста в случае ошибки
+        print("--- END DEBUG ---\n")
 
     try:
         async for chunk in client.stream_structured(

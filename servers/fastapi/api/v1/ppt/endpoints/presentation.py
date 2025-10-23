@@ -66,6 +66,8 @@ from utils.process_slides import (
     process_slide_and_fetch_assets,
 )
 import uuid
+from langchain_core.retrievers import BaseRetriever
+from services.document_processing_service import DOCUMENT_PROCESSING_SERVICE
 
 
 PRESENTATION_ROUTER = APIRouter(prefix="/presentation", tags=["Presentation"])
@@ -125,6 +127,8 @@ async def delete_presentation(
     await sql_session.delete(presentation)
     await sql_session.commit()
 
+    DOCUMENT_PROCESSING_SERVICE.cleanup(id)
+
 
 @PRESENTATION_ROUTER.post("/create", response_model=PresentationModel)
 async def create_presentation(
@@ -148,6 +152,15 @@ async def create_presentation(
         )
 
     presentation_id = uuid.uuid4()
+
+    if file_paths:
+        # Создаем векторную базу данных сразу при создании презентации
+        temp_dir = TEMP_FILE_SERVICE.create_temp_dir()
+        documents_loader = DocumentsLoader(file_paths=file_paths)
+        await documents_loader.load_documents(temp_dir)
+        documents = documents_loader.documents
+        if documents:
+            DOCUMENT_PROCESSING_SERVICE.create_vectorstore(presentation_id, documents)
 
     presentation = PresentationModel(
         id=presentation_id,
@@ -280,6 +293,8 @@ async def stream_presentation(
         layout = presentation.get_layout()
         outline = presentation.get_presentation_outline()
 
+        retriever = DOCUMENT_PROCESSING_SERVICE.get_retriever(id)
+
         # These tasks will be gathered and awaited after all slides are generated
         async_assets_generation_tasks = []
 
@@ -296,6 +311,7 @@ async def stream_presentation(
                     slide_layout,
                     outline.slides[i],
                     presentation.language,
+                    retriever,
                     presentation.tone,
                     presentation.verbosity,
                     presentation.instructions,
@@ -493,6 +509,7 @@ async def generate_presentation_handler(
     async_status: Optional[AsyncPresentationGenerationTaskModel],
     sql_session: AsyncSession = Depends(get_async_session),
 ):
+    retriever: BaseRetriever | None = None
     try:
         using_slides_markdown = False
 
@@ -514,8 +531,12 @@ async def generate_presentation_handler(
                 documents_loader = DocumentsLoader(file_paths=request.files)
                 await documents_loader.load_documents()
                 documents = documents_loader.documents
+                print("Documents loaded: ", len(documents))
                 if documents:
-                    additional_context = "\n\n".join(documents)
+                    # additional_context = "\n\n".join(documents)
+                    DOCUMENT_PROCESSING_SERVICE.create_vectorstore(presentation_id, documents)
+                    retriever = DOCUMENT_PROCESSING_SERVICE.get_retriever(presentation_id)
+                    print("Retriever created")
 
             # Finding number of slides to generate by considering table of contents
             n_slides_to_generate = request.n_slides
@@ -533,6 +554,16 @@ async def generate_presentation_handler(
                 )
 
             presentation_outlines_text = ""
+
+            additional_context = ''
+            if retriever:
+                print('Creating relevant docs in outlines')
+                relevant_docs = await retriever.ainvoke(request.content)
+                print('Relevant docs created', len(relevant_docs))
+                additional_context = "\n\n---\n\n".join([doc.page_content for doc in relevant_docs])
+                print('Additional context created', additional_context[:10])
+                print('Additional context len', len(additional_context))
+
             async for chunk in generate_ppt_outline(
                 request.content,
                 n_slides_to_generate,
@@ -692,6 +723,7 @@ async def generate_presentation_handler(
                     slide_layouts[i],
                     presentation_outlines.slides[i],
                     request.language,
+                    retriever,
                     request.tone.value,
                     request.verbosity.value,
                     request.instructions,
@@ -799,6 +831,9 @@ async def generate_presentation_handler(
 
         else:
             raise e
+
+    finally:
+        DOCUMENT_PROCESSING_SERVICE.cleanup(presentation_id)
 
 
 @PRESENTATION_ROUTER.post("/generate", response_model=PresentationPathAndEditPath)

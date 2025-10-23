@@ -21,6 +21,7 @@ from services.database import get_async_session
 from services.documents_loader import DocumentsLoader
 from utils.llm_calls.generate_presentation_outlines import generate_ppt_outline
 from utils.ppt_utils import get_presentation_title_from_outlines
+from services.document_processing_service import DOCUMENT_PROCESSING_SERVICE
 
 OUTLINES_ROUTER = APIRouter(prefix="/outlines", tags=["Outlines"])
 
@@ -37,17 +38,20 @@ async def stream_outlines(
     temp_dir = TEMP_FILE_SERVICE.create_temp_dir()
 
     async def inner():
+        retriever = None
         yield SSEStatusResponse(
             status="Generating presentation outlines..."
         ).to_string()
 
         additional_context = ""
         if presentation.file_paths:
+            yield SSEStatusResponse(status="Processing documents...").to_string()
             documents_loader = DocumentsLoader(file_paths=presentation.file_paths)
             await documents_loader.load_documents(temp_dir)
             documents = documents_loader.documents
             if documents:
-                additional_context = "\n\n".join(documents)
+                retriever = DOCUMENT_PROCESSING_SERVICE.get_retriever(presentation.id)
+                yield SSEStatusResponse(status="Documents processed, generating outlines...").to_string()
 
         presentation_outlines_text = ""
 
@@ -62,7 +66,7 @@ async def stream_outlines(
             presentation.content,
             n_slides_to_generate,
             presentation.language,
-            additional_context,
+            retriever,
             presentation.tone,
             presentation.verbosity,
             presentation.instructions,
