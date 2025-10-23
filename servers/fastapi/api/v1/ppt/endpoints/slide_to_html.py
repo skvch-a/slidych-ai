@@ -19,7 +19,7 @@ from .prompts import (
     HTML_EDIT_SYSTEM_PROMPT,
 )
 from models.sql.template import TemplateModel
-from utils.llm_config import get_user_config
+from utils.user_config import get_user_config
 
 
 # Create separate routers for each functionality
