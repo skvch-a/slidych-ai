@@ -143,8 +143,8 @@ const SupportingDoc = ({ files, onFilesChange }: SupportingDocProps) => {
                     />
 
                     <button
-                        className="px-6 py-2 bg-purple-600 text-white rounded-full
-                            hover:bg-purple-700 transition-colors duration-200
+                        className="px-6 py-2 bg-[#003174] text-white rounded-full
+                            hover:bg-[#003174]/80 transition-colors duration-200
                             font-medium text-sm"
                     >
                         Выбрать файлы
