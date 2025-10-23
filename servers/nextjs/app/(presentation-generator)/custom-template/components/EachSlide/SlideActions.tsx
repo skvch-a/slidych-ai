@@ -84,7 +84,7 @@ export const SlideActions: React.FC<SlideActionsProps> = ({
             </ToolTip>
           </div>
           <div>
-            <ToolTip content="Delete Slide">
+
               <button
                 disabled={isProcessing}
                 onClick={onDelete}
@@ -94,7 +94,7 @@ export const SlideActions: React.FC<SlideActionsProps> = ({
               >
                 <Trash className="w-4 sm:w-5 h-4 sm:h-5 text-red-500" />
               </button>
-            </ToolTip>
+
           </div>
         </div>
       )}

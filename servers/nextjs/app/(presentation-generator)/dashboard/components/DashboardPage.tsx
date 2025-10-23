@@ -46,13 +46,13 @@ const DashboardPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#E9E8F8]">
+    <div className="min-h-screen bg-[#FFFFFF]">
       <Header />
       <Wrapper>
         <main className="container mx-auto px-4 py-8">
           <section>
             <h2 className="text-2xl font-roboto font-medium mb-6">
-              Slide Presentation
+              Презентации
             </h2>
             <PresentationGrid
               presentations={presentations}

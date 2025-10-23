@@ -113,7 +113,7 @@ const SupportingDoc = ({ files, onFilesChange }: SupportingDocProps) => {
 
     return (
         <div className="w-full">
-            <h2 className="text-[#444] font-instrument_sans pt-4 text-lg mb-4">Supporting Documents</h2>
+            <h2 className="text-[#444] font-instrument_sans pt-4 text-lg mb-4">Документы для презентации</h2>
             <div
                 onClick={() => fileInputRef.current?.click()}
                 className={cn(
@@ -134,12 +134,12 @@ const SupportingDoc = ({ files, onFilesChange }: SupportingDocProps) => {
 
                     <p className="text-gray-600 text-center mb-2">
                         {isDragging
-                            ? 'Drop your file here'
-                            : 'Drag and drop your file here or click below button'
+                            ? 'Переместите файл сюда'
+                            : 'Переместите свой файл сюда или нажмите на кнопку ниже'
                         }
                     </p>
                     <p className="text-gray-400 text-sm text-center mb-4">
-                        Supports PDFs, Text files, PPTX, DOCX
+                        Поддерживает PDF, TXT, PPTX, DOCX
                     </p>
 
                     <input
@@ -158,11 +158,11 @@ const SupportingDoc = ({ files, onFilesChange }: SupportingDocProps) => {
                             e.stopPropagation()
                             fileInputRef.current?.click()
                         }}
-                        className="px-6 py-2 bg-purple-600 text-white rounded-full
-                            hover:bg-purple-700 transition-colors duration-200
+                        className="px-6 py-2 bg-[#003174] text-white rounded-full
+                            hover:bg-[#003174]/80 transition-colors duration-200
                             font-medium text-sm"
                     >
-                        Choose Files
+                        Выбрать файлы
                     </button>
                 </div>
 
@@ -171,7 +171,7 @@ const SupportingDoc = ({ files, onFilesChange }: SupportingDocProps) => {
                         <div className="p-4">
                             <div className="flex items-center justify-between mb-3">
                                 <h3 className="text-sm font-medium text-gray-700">
-                                    Selected Files ({files.length})
+                                    Загруженные файлы ({files.length})
                                 </h3>
                             </div>
                             <div data-testid="file-list" className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
@@ -187,7 +187,7 @@ const SupportingDoc = ({ files, onFilesChange }: SupportingDocProps) => {
                                             transition-colors flex items-center justify-center relative"
                                                 >
 
-                                                    <File className="w-8 h-8 text-purple-600" />
+                                                    <File className="w-8 h-8 text-blue-600" />
 
                                                     <button
                                                         onClick={(e) => {

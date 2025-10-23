@@ -42,6 +42,33 @@ interface LLMProviderSelectionProps {
   setButtonState: (state: ButtonState | ((prev: ButtonState) => ButtonState)) => void;
 }
 
+function getSelectedModelName(llmConfig: LLMConfig): string {
+  const dashIfEmpty = (s: string | undefined) => s === undefined || s === null || s === "" ? "—" : s;
+  
+  switch (llmConfig.LLM) {
+    case "ollama":
+      return dashIfEmpty(llmConfig.OLLAMA_MODEL);
+    case "custom":
+      return dashIfEmpty(llmConfig.CUSTOM_MODEL);
+    case "antrhopic":
+      return dashIfEmpty(llmConfig.ANTHROPIC_MODEL);
+    case "google":
+      return dashIfEmpty(llmConfig.GOOGLE_MODEL);
+    case "openai":
+      return dashIfEmpty(llmConfig.OPENAI_MODEL);
+  }
+  
+  return "—";
+}
+
+function getSelectedImageProviderName(llmConfig: LLMConfig): string {
+  const dashIfEmpty = (s: string | undefined) => s === undefined || s === null || s === "" ? "—" : s;
+
+  if (llmConfig.IMAGE_PROVIDER && IMAGE_PROVIDERS[llmConfig.IMAGE_PROVIDER])
+    return dashIfEmpty(IMAGE_PROVIDERS[llmConfig.IMAGE_PROVIDER].label);
+  return "—";
+}
+
 export default function LLMProviderSelection({
   initialLLMConfig,
   onConfigChange,
@@ -74,7 +101,7 @@ export default function LLMProviderSelection({
     setButtonState({
       isLoading: false,
       isDisabled: needsModelSelection || needsApiKey || needsOllamaUrl,
-      text: needsModelSelection ? "Please Select a Model" : needsApiKey ? "Please Enter API Key" : needsOllamaUrl ? "Please Enter Ollama URL" : "Save Configuration",
+      text: needsModelSelection ? "Пожалуйста, выберите модель" : needsApiKey ? "Пожалуйста, введите API ключ" : needsOllamaUrl ? "Пожалуйста, введите URL для Ollama" : "Сохранить",
       showProgress: false
     });
 
@@ -201,7 +228,7 @@ export default function LLMProviderSelection({
         {/* Image Provider Selection */}
         <div className="my-8">
           <label className="block text-sm font-medium text-gray-700 mb-3">
-            Select Image Provider
+            Выберите провайдера изображений
           </label>
           <div className="w-full">
             <Popover
@@ -232,9 +259,9 @@ export default function LLMProviderSelection({
                 style={{ width: "var(--radix-popover-trigger-width)" }}
               >
                 <Command>
-                  <CommandInput placeholder="Search provider..." />
+                  <CommandInput placeholder="Найти провайдера..." />
                   <CommandList>
-                    <CommandEmpty>No provider found.</CommandEmpty>
+                    <CommandEmpty>Провайдеры не найдены.</CommandEmpty>
                     <CommandGroup>
                       {Object.values(IMAGE_PROVIDERS).map(
                         (provider, index) => (
@@ -301,7 +328,7 @@ export default function LLMProviderSelection({
                 <div className="relative">
                   <input
                     type="text"
-                    placeholder={`Enter your ${provider.apiKeyFieldLabel}`}
+                    placeholder={`Введите свой ${provider.apiKeyFieldLabel}`}
                     className="w-full px-4 py-2.5 outline-none border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
                     value={
                       provider.apiKeyField === "PEXELS_API_KEY"
@@ -325,7 +352,7 @@ export default function LLMProviderSelection({
                 </div>
                 <p className="mt-2 text-sm text-gray-500 flex items-center gap-2">
                   <span className="block w-1 h-1 rounded-full bg-gray-400"></span>
-                  API key for {provider.label} image generation
+                  API ключ для провайдера изображений {provider.label}
                 </p>
               </div>
             );
@@ -337,27 +364,13 @@ export default function LLMProviderSelection({
             <Info className="w-5 h-5 text-blue-500 mt-0.5" />
             <div>
               <h3 className="text-sm font-medium text-blue-900 mb-1">
-                Selected Models
+                Используемые модели
               </h3>
               <p className="text-sm text-blue-700">
-                Using{" "}
-                {llmConfig.LLM === "ollama"
-                  ? llmConfig.OLLAMA_MODEL ?? "xxxxx"
-                  : llmConfig.LLM === "custom"
-                    ? llmConfig.CUSTOM_MODEL ?? "xxxxx"
-                    : llmConfig.LLM === "anthropic"
-                      ? llmConfig.ANTHROPIC_MODEL ?? "xxxxx"
-                      : llmConfig.LLM === "google"
-                        ? llmConfig.GOOGLE_MODEL ?? "xxxxx"
-                        : llmConfig.LLM === "openai"
-                          ? llmConfig.OPENAI_MODEL ?? "xxxxx"
-                          : "xxxxx"}{" "}
-                for text generation and{" "}
-                {llmConfig.IMAGE_PROVIDER &&
-                  IMAGE_PROVIDERS[llmConfig.IMAGE_PROVIDER]
-                  ? IMAGE_PROVIDERS[llmConfig.IMAGE_PROVIDER].label
-                  : "xxxxx"}{" "}
-                for images
+                для генерации текста: <b>{getSelectedModelName(llmConfig)}</b>
+              </p>
+              <p className="text-sm text-blue-700">
+                для генерации изображений: <b>{getSelectedImageProviderName(llmConfig)}</b>
               </p>
             </div>
           </div>

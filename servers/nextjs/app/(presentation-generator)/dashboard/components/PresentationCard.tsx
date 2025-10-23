@@ -78,7 +78,7 @@ export const PresentationCard = ({
                 className="flex items-center justify-between w-full px-2 py-1 hover:bg-gray-100"
                 onClick={handleDelete}
               >
-                <p>Delete</p>
+                <p>Удалить</p>
                 <TrashIcon className="w-4 h-4 text-red-500" />
               </button>
             </PopoverContent>

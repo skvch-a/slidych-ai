@@ -84,7 +84,7 @@ const SettingsPage = () => {
           await handleModelDownload();
         }
       }
-      toast.info("Configuration saved successfully");
+      toast.info("Конфигурация успешно сохранена");
       setButtonState(prev => ({
         ...prev,
         isLoading: false,
@@ -94,7 +94,7 @@ const SettingsPage = () => {
       trackEvent(MixpanelEvent.Navigation, { from: pathname, to: "/upload" });
       router.push("/upload");
     } catch (error) {
-      toast.info(error instanceof Error ? error.message : "Failed to save configuration");
+      toast.info(error instanceof Error ? error.message : "Не удалось сохранить конфигурацию");
       setButtonState(prev => ({
         ...prev,
         isLoading: false,
@@ -176,7 +176,7 @@ const SettingsPage = () => {
             className={`w-full font-semibold py-3 px-4 rounded-lg transition-all duration-500 ${
               buttonState.isDisabled
                 ? "bg-gray-400 cursor-not-allowed"
-                : "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 focus:ring-4 focus:ring-blue-200"
+                : "bg-blue-900 hover:from-blue-700 hover:to-indigo-700 focus:ring-4 focus:ring-blue-200"
             } text-white`}
           >
             {buttonState.isLoading ? (
@@ -209,8 +209,8 @@ const SettingsPage = () => {
               {/* Title */}
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
                 {downloadingModel.done
-                  ? "Download Complete!"
-                  : "Downloading Model"}
+                  ? "Загрузка завершена!"
+                  : "Загружаем модель"}
               </h3>
 
               {/* Model Name */}
@@ -248,7 +248,7 @@ const SettingsPage = () => {
                 downloadingModel.status !== "pulled" && (
                   <div className="text-xs text-gray-500">
                     {downloadingModel.status === "downloading" &&
-                      "Downloading model files..."}
+                      "Загрузка файлов модели..."}
                     {downloadingModel.status === "verifying" &&
                       "Verifying model integrity..."}
                     {downloadingModel.status === "pulling" &&

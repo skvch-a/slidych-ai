@@ -71,16 +71,7 @@ const GroupLayouts: React.FC<GroupLayoutsProps> = ({
       </div>
 
       <div className="flex items-center justify-between text-sm text-gray-500">
-        <span>{layoutGroup?.length} layouts</span>
-        <span
-          className={`px-2 py-1 rounded text-xs ${
-            group.ordered
-              ? "bg-gray-100 text-gray-700"
-              : "bg-blue-100 text-blue-700"
-          }`}
-        >
-          {group.ordered ? "Structured" : "Flexible"}
-        </span>
+        <span>{layoutGroup?.length} макетов</span>
       </div>
     </div>
   );
