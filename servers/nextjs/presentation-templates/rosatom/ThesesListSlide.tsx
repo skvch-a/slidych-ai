@@ -46,7 +46,7 @@ const dynamicSlideLayout: React.FC<SlideLayoutProps> = ({ data: slideData }) => 
                             <h4 className="text-2xl font-semibold mb-2" style={{ color: 'var(--text-heading-color, #0f172a)' }}>
                                 {item.heading}
                             </h4>
-                            <div className="w-16 h-1 mb-3" style={{ backgroundColor: 'var(--primary-accent-color, #2563eb)' }}></div>
+                            <div className="w-16 h-1 mb-3" style={{ backgroundColor: 'var(--primary-accent-color, rgb(63, 123, 191))' }}></div>
                             <p className="text-lg leading-relaxed">
                                 {item.content}
                             </p>

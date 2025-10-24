@@ -20,7 +20,7 @@ const dynamicSlideLayout: React.FC<SlideLayoutProps> = ({ data: slideData }) => 
         <div
             className="w-full rounded-sm max-w-[1280px] shadow-lg max-h-[720px] aspect-video relative z-20 mx-auto overflow-hidden flex flex-col justify-center items-center p-12"
             style={{
-                backgroundColor: 'var(--primary-accent-color, #2563eb)',
+                background: 'linear-gradient(45deg, rgb(63, 123, 191), rgb(30, 37, 103))',
                 color: 'var(--text-heading-color-dark, #ffffff)',
                 fontFamily: 'var(--heading-font-family, Inter, sans-serif)'
             }}
