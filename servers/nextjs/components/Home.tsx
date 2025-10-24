@@ -61,7 +61,7 @@ export default function Home() {
         ...prev,
         isLoading: true,
         isDisabled: true,
-        text: "Saving Configuration..."
+        text: "Сохранение..."
       }));
       // API: save config
       trackEvent(MixpanelEvent.Home_SaveConfiguration_API_Call);
