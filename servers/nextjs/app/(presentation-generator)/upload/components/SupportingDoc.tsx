@@ -59,19 +59,10 @@ const SupportingDoc = ({ files, onFilesChange }: SupportingDocProps) => {
             toast.error('Invalid file type', {
                 description: 'Please upload only PDF, TXT, PPTX, or DOCX files',
             });
-            return;
         }
 
-        if (hasPdf && droppedFiles.some(file => file.type === 'application/pdf')) {
-            toast.error('Multiple PDF files are not allowed', {
-                description: 'Please select only one PDF file',
-            });
-            return;
-        }
-
-        const validFiles = droppedFiles.filter(file => {
-            return !(hasPdf && file.type === 'application/pdf');
-        });
+        // Фильтруем только допустимые файлы
+        const validFiles = droppedFiles.filter(file => validTypes.includes(file.type));
 
         if (validFiles.length > 0) {
             const updatedFiles = [...files, ...validFiles]
@@ -86,19 +77,17 @@ const SupportingDoc = ({ files, onFilesChange }: SupportingDocProps) => {
     const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         const selectedFiles = Array.from(e.target.files || []);
 
-        const hasPdf = files.some(file => file.type === 'application/pdf');
-
-        const validFiles = selectedFiles.filter(file => {
-            return !(hasPdf && file.type === 'application/pdf');
-        });
-
-        if (validFiles.length > 0) {
-            const updatedFiles = [...files, ...validFiles]
+        if (selectedFiles.length > 0) {
+            const updatedFiles = [...files, ...selectedFiles]
             onFilesChange(updatedFiles)
 
             toast.success('Files selected', {
-                description: `${validFiles.length} file(s) have been added`,
+                description: `${selectedFiles.length} file(s) have been added`,
             })
+        }
+        // Очищаем input, чтобы можно было выбрать тот же файл снова
+        if (e.target) {
+            e.target.value = '';
         }
     }
 
@@ -154,10 +143,6 @@ const SupportingDoc = ({ files, onFilesChange }: SupportingDocProps) => {
                     />
 
                     <button
-                        onClick={(e) => {
-                            e.stopPropagation()
-                            fileInputRef.current?.click()
-                        }}
                         className="px-6 py-2 bg-[#003174] text-white rounded-full
                             hover:bg-[#003174]/80 transition-colors duration-200
                             font-medium text-sm"

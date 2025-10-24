@@ -52,9 +52,9 @@ const dynamicSlideLayout: React.FC<SlideLayoutProps> = ({ data: slideData }) => 
                         <YAxis stroke="var(--text-body-color, #374151)" />
                         <Tooltip />
                         <Legend />
-                        <Bar dataKey="value" name="Показатель" fill="var(--primary-accent-color, #2563eb)" />
+                        <Bar dataKey="value" name="Показатель" fill="var(--primary-accent-color, rgb(63, 129, 191))" />
                     </BarChart>
-                </ResponsiveContainer>
+                </ResponsiveContainer>rgb(63, 129, 191)
             </div>
             <BlueLine />
         </div>
