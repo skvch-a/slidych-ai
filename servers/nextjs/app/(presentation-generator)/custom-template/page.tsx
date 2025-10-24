@@ -100,15 +100,14 @@ const CustomTemplatePage = () => {
         {/* Header */}
         <div className="text-center space-y-2 my-6">
           <h1 className="text-4xl font-bold text-gray-900">
-            Custom Template Processor
+            Создайте собственный шаблон
           </h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Upload your PDF or PPTX file to extract slides and convert them to
-            a template which you can use to generate AI presentations.
+            Загрузите файл PDF или PPTX, и Cлайдыч с помощью ИИ сгенерирует шаблон на основе загруженной презентации.
           </p>
           <div className="max-w-2xl mx-auto mt-2">
             <div className="inline-block rounded border border-orange-200 bg-orange-50 px-3 py-2 text-sm text-orange-700">
-              AI template generation can take around 5 minutes per slide.
+              Генерация шаблона занимает примерно 3 минуты на слайд.
             </div>
           </div>
         </div>

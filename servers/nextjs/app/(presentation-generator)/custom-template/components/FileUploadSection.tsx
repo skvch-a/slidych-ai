@@ -36,11 +36,8 @@ export const FileUploadSection: React.FC<FileUploadSectionProps> = ({
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Upload className="w-5 h-5" />
-          Upload PDF or PPTX File
+          Загрузите PDF или PPTX файл
         </CardTitle>
-        <CardDescription>
-          Select a PDF or PowerPoint file (.pdf or .pptx) to process. Maximum file size: 100MB
-        </CardDescription>
         {slides.length > 0 && (
           <div className="flex items-center justify-end gap-2">
             {slides.some((s) => s.processing) && (
@@ -56,7 +53,7 @@ export const FileUploadSection: React.FC<FileUploadSectionProps> = ({
             <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
             <Label htmlFor="file-upload" className="cursor-pointer">
               <span className="text-lg font-medium text-gray-700">
-                Click to upload a PDF or PPTX file
+                Переместите свой файл сюда или нажмите на кнопку ниже
               </span>
               <input
                 id="file-upload"
@@ -66,9 +63,6 @@ export const FileUploadSection: React.FC<FileUploadSectionProps> = ({
                 className="opacity-0 w-full h-full cursor-pointer absolute top-0 left-0 z-10"
               />
             </Label>
-            <p className="text-sm text-gray-500 mt-2">
-              Drag and drop your file here or click to browse
-            </p>
           </div>
         ) : (
           <div className="flex items-center justify-between p-4 bg-blue-50 border border-blue-200 rounded-lg">
@@ -101,13 +95,13 @@ export const FileUploadSection: React.FC<FileUploadSectionProps> = ({
           <Button
             onClick={processFile}
             disabled={isProcessingPptx || slides.some((s) => s.processing)}
-            className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
+            className="flex-1 bg-blue-900 hover:bg-blue-700 text-white"
           >
             {isProcessingPptx
-              ? "Extracting Slides..."
+              ? "Извлекаем слайды..."
               : !selectedFile
-              ? "Select a PDF or PPTX file"
-              : "Process File"}
+              ? "Загрузите PDF или PPTX файл"
+              : "Обработка файла"}
           </Button>
           {isProcessingPptx && <Timer duration={90} />}
         </div>
