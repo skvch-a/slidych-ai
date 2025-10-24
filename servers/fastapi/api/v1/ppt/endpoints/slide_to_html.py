@@ -1,5 +1,6 @@
 import os
 import base64
+import asyncio
 from datetime import datetime
 from typing import Optional, List, Dict
 from uuid import UUID
@@ -7,7 +8,8 @@ from fastapi import APIRouter, HTTPException, File, UploadFile, Form, Depends
 from pydantic import BaseModel
 from openai import OpenAI
 from openai import APIError
-import google.generativeai as genai
+from google import genai
+from google.genai.types import Content as GoogleContent, Part as GoogleContentPart
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, delete, func
 from utils.asset_directory_utils import get_images_directory
@@ -141,8 +143,7 @@ async def generate_html_from_slide_google(
     """
     print(f"Generating HTML from slide image and XML using Google {model}...")
     try:
-        genai.configure(api_key=api_key)
-        gemini_model = genai.GenerativeModel(model)
+        client = genai.Client(api_key=api_key)
 
         fonts_text = (
             f"\nFONTS (Normalized root families used in this slide, use where it is required): {', '.join(fonts)}"
@@ -150,15 +151,28 @@ async def generate_html_from_slide_google(
             else ""
         )
 
-        prompt = f"{GENERATE_HTML_SYSTEM_PROMPT}\n\nOXML: {xml_content}{fonts_text}"
+        # Decode base64 image
+        image_bytes = base64.b64decode(base64_image)
 
-        # Convert base64 to PIL Image for Google
-        import io
-        from PIL import Image
-        image_data = base64.b64decode(base64_image)
-        image = Image.open(io.BytesIO(image_data))
+        # Create content with system prompt, image, and text
+        prompt_text = f"{GENERATE_HTML_SYSTEM_PROMPT}\n\nOXML: {xml_content}{fonts_text}"
 
-        response = gemini_model.generate_content([prompt, image])
+        contents = [
+            GoogleContentPart(
+                inline_data={
+                    "mime_type": "image/png",
+                    "data": image_bytes
+                }
+            ),
+            GoogleContentPart(text=prompt_text)
+        ]
+
+        response = await asyncio.to_thread(
+            client.models.generate_content,
+            model=model,
+            contents=contents,
+        )
+
         html_content = response.text
 
         print(f"Received HTML content length: {len(html_content)}")
@@ -304,19 +318,31 @@ async def generate_react_component_from_html_google(
     """
     print(f"Making Google {model} request for React component generation...")
     try:
-        genai.configure(api_key=api_key)
-        gemini_model = genai.GenerativeModel(model)
+        client = genai.Client(api_key=api_key)
 
-        prompt = f"{HTML_TO_REACT_SYSTEM_PROMPT}\n\nHTML INPUT:\n{html_content}"
+        prompt_text = f"{HTML_TO_REACT_SYSTEM_PROMPT}\n\nHTML INPUT:\n{html_content}"
+
+        contents = []
 
         if image_base64:
-            import io
-            from PIL import Image
-            image_data = base64.b64decode(image_base64)
-            image = Image.open(io.BytesIO(image_data))
-            response = gemini_model.generate_content([prompt, image])
-        else:
-            response = gemini_model.generate_content(prompt)
+            # Decode base64 image
+            image_bytes = base64.b64decode(image_base64)
+            contents.append(
+                GoogleContentPart(
+                    inline_data={
+                        "mime_type": "image/png",
+                        "data": image_bytes
+                    }
+                )
+            )
+
+        contents.append(GoogleContentPart(text=prompt_text))
+
+        response = await asyncio.to_thread(
+            client.models.generate_content,
+            model=model,
+            contents=contents,
+        )
 
         react_content = response.text
 
