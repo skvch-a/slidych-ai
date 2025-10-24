@@ -91,6 +91,9 @@ def get_messages(
 
 def _parse_gigachat_response(raw_response: str) -> dict:
     """Пытаемся преобразовать ответ GigaChat к ожидаемому JSON-формату."""
+    print("=== Parsing GigaChat response ===")
+    print(f"Response length: {len(raw_response)}")
+    print(f"First 500 chars: {raw_response[:500]}")
 
     def _encode_content(match: re.Match[str]) -> str:
         content = match.group("content")
@@ -103,9 +106,10 @@ def _parse_gigachat_response(raw_response: str) -> dict:
     try:
         parsed = dirtyjson.loads(sanitized)
         if isinstance(parsed, dict) and parsed.get("slides"):
+            print(f"Successfully parsed: found {len(parsed['slides'])} slides")
             return parsed
-    except Exception:
-        pass
+    except Exception as e:
+        print(f"Failed to parse as dirtyjson: {e}")
 
     # Фолбэк: извлекаем только содержимое слайдов
     slides = []
@@ -115,8 +119,19 @@ def _parse_gigachat_response(raw_response: str) -> dict:
             slides.append({"content": content})
 
     if slides:
+        print(f"Fallback: extracted {len(slides)} slides from triple quotes")
         return {"slides": slides}
 
+    # Последний фолбэк: попробуем распарсить как обычный JSON
+    try:
+        parsed = json.loads(raw_response)
+        if isinstance(parsed, dict) and parsed.get("slides"):
+            print(f"Parsed as standard JSON: found {len(parsed['slides'])} slides")
+            return parsed
+    except Exception as e:
+        print(f"Failed to parse as standard JSON: {e}")
+
+    print("ERROR: Could not extract slides from response")
     raise ValueError("GigaChat response does not contain slides")
 
 

@@ -128,7 +128,18 @@ async def stream_outlines(
             ).to_string()
             return
 
-        presentation_outlines = PresentationOutlineModel(**presentation_outlines_json)
+        try:
+            print("=== Attempting to validate with PresentationOutlineModel ===")
+            print("JSON structure:", json.dumps(presentation_outlines_json, indent=2, ensure_ascii=False))
+            presentation_outlines = PresentationOutlineModel(**presentation_outlines_json)
+        except Exception as validation_error:
+            print("=== Validation Error ===")
+            print("Error:", str(validation_error))
+            print("=====================")
+            yield SSEErrorResponse(
+                detail=f"Failed to validate presentation outlines: {str(validation_error)}",
+            ).to_string()
+            return
 
         presentation_outlines.slides = presentation_outlines.slides[
             :n_slides_to_generate

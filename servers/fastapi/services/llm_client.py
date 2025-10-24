@@ -620,7 +620,16 @@ class LLMClient:
                 )
         if content:
             if depth == 0:
-                return dict(dirtyjson.loads(content))
+                content_stripped = content.strip()
+                if not content_stripped:
+                    print(f"Warning: Empty content received from LLM at depth {depth}")
+                    return None
+                try:
+                    return dict(dirtyjson.loads(content_stripped))
+                except Exception as e:
+                    print(f"Error parsing LLM response: {e}")
+                    print(f"Content (first 500 chars): {content_stripped[:500]}")
+                    raise
             return content
         return None
 
@@ -863,14 +872,56 @@ class LLMClient:
         max_tokens: Optional[int] = None,
         depth: int = 0,
     ):
-        return await self._generate_openai_structured(
+        # GigaChat doesn't support json_schema, so we use simple json mode with prompt enhancement
+        client: openai.AsyncOpenAI = self.client
+
+        # Add JSON instruction to the last user message
+        enhanced_messages = messages.copy()
+        if enhanced_messages and enhanced_messages[-1].role == "user":
+            schema_str = json.dumps(response_format, indent=2, ensure_ascii=False)
+            enhanced_messages[-1] = LLMMessage(
+                role="user",
+                content=f"{enhanced_messages[-1].content}\n\nПожалуйста, верни ответ СТРОГО в формате JSON согласно следующей схеме:\n{schema_str}\n\nОтветь ТОЛЬКО валидным JSON, без дополнительного текста до или после.",
+            )
+
+        # Filter out messages with unsupported roles for GigaChat (only user/assistant/system allowed)
+        filtered_messages = []
+        for msg in enhanced_messages:
+            msg_dict = msg.model_dump()
+            # Ensure role is valid
+            if msg_dict.get("role") in ["user", "assistant", "system"]:
+                filtered_messages.append(msg_dict)
+            else:
+                print(f"Warning: Skipping message with unsupported role: {msg_dict.get('role')}")
+
+        print(f"Sending {len(filtered_messages)} messages to GigaChat")
+
+        response = await client.chat.completions.create(
             model=model,
-            messages=messages,
-            response_format=response_format,
-            strict=strict,
+            messages=filtered_messages,
+            response_format={"type": "json_object"},
             max_tokens=max_tokens,
-            depth=depth,
         )
+
+        content = response.choices[0].message.content
+
+        if content:
+            content_stripped = content.strip()
+            if not content_stripped:
+                print(f"Warning: Empty content received from GigaChat at depth {depth}")
+                return None
+            try:
+                return dict(json.loads(content_stripped))
+            except json.JSONDecodeError as e:
+                print(f"Error parsing GigaChat JSON response: {e}")
+                print(f"Content (first 500 chars): {content_stripped[:500]}")
+                # Try dirtyjson as fallback
+                try:
+                    return dict(dirtyjson.loads(content_stripped))
+                except Exception as e2:
+                    print(f"dirtyjson also failed: {e2}")
+                    raise e
+        return None
 
     async def generate_structured(
         self,
