@@ -5,10 +5,12 @@
 существующие презентации) и в интерактивном режиме с пользователем формирует готовый слайд-дек 
 в разных шаблонах шаблоне.
 
-<img src="scripts/readme_res/1.png" style="width:40%; height:auto;">
-<img src="scripts/readme_res/2.png" style="width:40%; height:auto;">
-<img src="scripts/readme_res/3.png" style="width:40%; height:auto;">
-<img src="scripts/readme_res/4.png" style="width:40%; height:auto;">
+<center>
+    <img src="scripts\readme_res\1.png" style="width: 40%; height: auto;">
+    <img src="scripts\readme_res\2.png" style="width: 40%; height: auto;">
+    <img src="scripts\readme_res\3.png" style="width: 40%; height: auto;">
+    <img src="scripts\readme_res\4.png" style="width: 40%; height: auto;">
+</center>
 
 
 ## Основные возможности
