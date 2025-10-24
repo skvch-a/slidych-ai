@@ -95,6 +95,8 @@ const setupUserConfigFromEnv = () => {
     PEXELS_API_KEY: process.env.PEXELS_API_KEY || existingConfig.PEXELS_API_KEY,
     PIXABAY_API_KEY:
       process.env.PIXABAY_API_KEY || existingConfig.PIXABAY_API_KEY,
+    KANDINSKY_API_KEY:
+      process.env.KANDINSKY_API_KEY || existingConfig.KANDINSKY_API_KEY,
     IMAGE_PROVIDER: process.env.IMAGE_PROVIDER || existingConfig.IMAGE_PROVIDER,
     TOOL_CALLS: process.env.TOOL_CALLS || existingConfig.TOOL_CALLS,
     DISABLE_THINKING:
