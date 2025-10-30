@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="readme_assets/logo.png" height="90" alt="Slidych Logo" />
+  <img src="readme_assets/logo.png" height="180" alt="Slidych Logo" />
 </p>
 
 # Open-Source AI-ассистент для создания презентаций
