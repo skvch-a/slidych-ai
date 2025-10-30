@@ -279,36 +279,36 @@ const ImageEditor = ({
           onClick={(e) => e.stopPropagation()}
         >
           <SheetHeader>
-            <SheetTitle>Update Image</SheetTitle>
+            <SheetTitle>Изменить изображение</SheetTitle>
           </SheetHeader>
 
           <div className="mt-6">
             <Tabs defaultValue="generate" className="w-full" onValueChange={handleTabChange}>
               <TabsList className="grid bg-blue-100 border border-blue-300 w-full grid-cols-3 mx-auto">
                 <TabsTrigger className="font-medium" value="generate">
-                  AI Generate
+                    ИИ генерация
                 </TabsTrigger>
                 <TabsTrigger className="font-medium" value="upload">
-                  Upload
+                  Загрузить
                 </TabsTrigger>
                 <TabsTrigger className="font-medium" value="edit">
-                  Edit
+                  Редактировать
                 </TabsTrigger>
               </TabsList>
               {/* Generate Tab */}
               <TabsContent value="generate" className="mt-4 space-y-4 overflow-y-auto hide-scrollbar h-[85vh]">
                 <div className="space-y-4">
                   <div>
-                    <h3 className="text-sm font-medium mb-1">Current Prompt</h3>
+                    <h3 className="text-sm font-medium mb-1">Текущий промт</h3>
                     <p className="text-sm text-gray-500">{promptContent}</p>
                   </div>
 
                   <div>
                     <h3 className="text-base font-medium mb-2">
-                      Image Description
+                      Описание изображения
                     </h3>
                     <Textarea
-                      placeholder="Describe the image you want to generate..."
+                      placeholder="Введите описание для генерации..."
                       value={prompt}
                       onChange={(e) => setPrompt(e.target.value)}
                       className="min-h-[100px]"
@@ -321,7 +321,7 @@ const ImageEditor = ({
                     disabled={!prompt || isGenerating}
                   >
                     <Wand2 className="w-4 h-4 mr-2" />
-                    {isGenerating ? "Generating..." : "Generate Image"}
+                    {isGenerating ? "Генерируем..." : "Сгенерировать изображение"}
                   </Button>
 
                   {error && <p className="text-red-500 text-sm">{error}</p>}
@@ -407,11 +407,11 @@ const ImageEditor = ({
                       )}
                       <span className="text-sm text-gray-600">
                         {isUploading
-                          ? "Uploading your image..."
-                          : "Click to upload an image"}
+                          ? "Загружаем..."
+                          : "Нажмите, чтобы загрузить изображение"}
                       </span>
                       <span className="text-xs text-gray-500 mt-1">
-                        Maximum file size: 5MB
+                        Максимальный размер файла: 5MB
                       </span>
                     </label>
                   </div>
@@ -425,7 +425,7 @@ const ImageEditor = ({
                   {(uploadedImageUrl || isUploading) && (
                     <div className="mt-4">
                       <h3 className="text-sm font-medium mb-2">
-                        Uploaded Image Preview
+                        Загруженное изображение
                       </h3>
                       <div className="aspect-[4/3] relative rounded-lg overflow-hidden border border-gray-200">
                         {isUploading ? (
@@ -433,7 +433,7 @@ const ImageEditor = ({
                             <div className="flex flex-col items-center">
                               <div className="w-8 h-8 border-2 border-gray-400 border-t-transparent rounded-full animate-spin mb-2" />
                               <span className="text-sm text-gray-500">
-                                Processing...
+                                Обрабатываем...
                               </span>
                             </div>
                           </div>
@@ -453,7 +453,7 @@ const ImageEditor = ({
                               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-200" />
                               <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                                 <span className="bg-white/90 px-3 py-1 rounded-full text-sm font-medium">
-                                  Click to use this image
+                                  Нажмите, чтобы использовать данное изображение
                                 </span>
                               </div>
                             </div>
@@ -463,7 +463,7 @@ const ImageEditor = ({
                     </div>
                   )}
                   <div>
-                    <h3 className="text-sm font-medium mb-2">Uploaded Images:</h3>
+                    <h3 className="text-sm font-medium mb-2">Загруженные изображения:</h3>
                     <div className="grid grid-cols-2 gap-4">
                       {uploadedImagesLoading ? (
                         <div className="flex items-center justify-center">
@@ -504,7 +504,7 @@ const ImageEditor = ({
               </TabsContent>
               <TabsContent value="edit" className="mt-4 space-y-4">
                 <div className="space-y-4">
-                  <h3 className="text-sm font-medium mb-2">Current Image</h3>
+                  <h3 className="text-sm font-medium mb-2">Текущее изображение</h3>
                   <div
                     onClick={(e) => {
                       if (isFocusPointMode) {
@@ -515,7 +515,7 @@ const ImageEditor = ({
                     className="aspect-[4/3] group  rounded-lg overflow-hidden relative border border-gray-200"
                   >
                     <p className="group-hover:opacity-100 opacity-0 transition-opacity absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-sm text-center font-medium bg-black/50 text-white px-2 py-1 rounded">
-                      Click to Change Focus Point
+                      Нажмите, чтобы изменить точку фокусировки
                     </p>
                     {previewImages && (
                       <img
@@ -536,7 +536,7 @@ const ImageEditor = ({
                       <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
                         <div className="text-white text-center p-2 bg-black/50 rounded">
                           <p className="text-sm font-medium pointer-events-none">
-                            Click anywhere to set focus point
+                            Нажмите, на желаемую точку фокусировки
                           </p>
                           <button
                             className="mt-2 px-3 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600"
@@ -545,7 +545,7 @@ const ImageEditor = ({
                               toggleFocusPointMode();
                             }}
                           >
-                            Done
+                            Готово
                           </button>
                         </div>
 
@@ -570,7 +570,7 @@ const ImageEditor = ({
                   {/* Object Fit */}
                   {
                     <div>
-                      <h3 className="text-sm font-medium mb-2">Object Fit</h3>
+                      <h3 className="text-sm font-medium mb-2">Режим отображения</h3>
                       <div className="flex gap-4">
                         <Button
                           variant="outline"
@@ -580,7 +580,7 @@ const ImageEditor = ({
                           )}
                           onClick={() => handleFitChange("cover")}
                         >
-                          Cover
+                          Заполнить
                         </Button>
                         <Button
                           variant="outline"
@@ -590,7 +590,7 @@ const ImageEditor = ({
                           )}
                           onClick={() => handleFitChange("contain")}
                         >
-                          Contain
+                          Уместить
                         </Button>
                         <Button
                           variant="outline"
@@ -599,7 +599,7 @@ const ImageEditor = ({
                           )}
                           onClick={() => handleFitChange("fill")}
                         >
-                          Fill
+                          Растянуть
                         </Button>
                       </div>
                     </div>

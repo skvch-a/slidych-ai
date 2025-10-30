@@ -234,7 +234,7 @@ const DocumentsPreviewPage: React.FC = () => {
 
         {documentKeys.length > 0 && (
           <div className="mt-8">
-            <p className="text-xs mt-2 text-[#2E2E2E] opacity-70">DOCUMENTS</p>
+            <p className="text-xs mt-2 text-[#2E2E2E] opacity-70">ДОКУМЕНТЫ</p>
             <div className="flex flex-col gap-2 mt-6">
               {documentKeys.map((key: string) => (
                 <div
@@ -293,9 +293,9 @@ const DocumentsPreviewPage: React.FC = () => {
         <div className="fixed bottom-5 right-5">
           <Button
             onClick={handleCreatePresentation}
-            className="flex items-center gap-2 px-8 py-6 rounded-sm text-md bg-[#5146E5] hover:bg-[#5146E5]/90"
+            className="flex items-center gap-2 px-8 py-6 rounded-sm text-md bg-blue-900 hover:bg-blue-900/90"
           >
-            <span className="text-white font-semibold">Next</span>
+            <span className="text-white font-semibold">Далее</span>
             <ChevronRight />
           </Button>
         </div>

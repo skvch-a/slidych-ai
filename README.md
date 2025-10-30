@@ -1,15 +1,27 @@
-# Слайдыч: AI-ассистент для создания презентаций
+<p align="center">
+  <img src="readme_assets/logo.png" height="90" alt="Slidych Logo" />
+</p>
 
-**Слайдыч** — это умный веб-сервис, который автоматизирует процесс создания инвестиционных презентаций. 
-Он анализирует различные проектные материалы (технические описания, финансовые модели, 
-существующие презентации) и в интерактивном режиме с пользователем формирует готовый слайд-дек 
-в разных шаблонах шаблоне.
+# Open-Source AI-ассистент для создания презентаций
+
+**Слайдыч** — это умный веб-сервис, который автоматизирует процесс создания презентаций. 
+Он позволяет генерировать презентаций на основе пользовательского описания и загруженных документов (PDF, PPTX, TXT, DOCX) - локально на вашем устройстве.  
+
+#### Проект основан на [Presenton](https://github.com/presenton/presenton)  
+###  **Доработки и улучшения**
+
+✅ **Новый Image Provider** - добавлена поддержка генерации изображений с помощью Kandinsky  
+✅ **RAG-система** - благодаря добавлению Retrieval-Augmented Generation появилась возможность обрабатывать даже объемные документы  
+✅ **Улучшенная обработка документов** - парсинг документов оптимизирован и ускорен  
+✅ **Локализация** - интерфейс сервиса полностью переведен на русский язык  
+✅ **Генерация шаблонов с GOOGLE** - добавлена поддержка моделей GOOGLE для генерации шаблонов  
+✅ **Новый шаблон** - добавлен шаблон в стиле корпорации "Росатом"
 
 <center>
-    <img src="scripts\readme_res\1.png" style="width: 40%; height: auto;">
-    <img src="scripts\readme_res\2.png" style="width: 40%; height: auto;">
-    <img src="scripts\readme_res\3.png" style="width: 40%; height: auto;">
-    <img src="scripts\readme_res\4.png" style="width: 40%; height: auto;">
+    <div><img src="readme_assets/1.png" style="width: 40%; height: auto; display: block; margin-bottom: 10px;"></div>
+    <div><img src="readme_assets/2.png" style="width: 40%; height: auto; display: block; margin-bottom: 10px;"></div>
+    <div><img src="readme_assets/3.png" style="width: 40%; height: auto; display: block; margin-bottom: 10px;"></div>
+    <div><img src="readme_assets/4.png" style="width: 40%; height: auto; display: block; margin-bottom: 10px;"></div>
 </center>
 
 
