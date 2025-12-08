@@ -65,50 +65,34 @@
 
 Все настройки проекта производятся в файле `.env`.
 
-### 1. Настройка LLM
+### 🧠 НАСТРОЙКИ LLM
+| Переменная                            | Описание | Пример |
+|:--------------------------------------| :--- | :--- |
+| `LLM`                                 | **Обязательно.** Выбор LLM-провайдера. <br> *Варианты: `openai`, `google`, `anthropic`, `ollama`, `custom`* | `"custom"` |
+| `CUSTOM_LLM_URL`                      | **(Если `LLM="custom"`).** URL вашего OpenAI-совместимого API. | `"your_custom_api"` |
+| `CUSTOM_LLM_API_KEY`                  | **(Если `LLM="custom"`).** API-ключ для вашего API. | `"your_custom_key"` |
+| `CUSTOM_MODEL`                        | **(Если `LLM="custom"`).** Название модели (например, `gigachat`). | `"gigachat"` |
+| `OPENAI_API_KEY`                      | **(Если `LLM="openai"` или `IMAGE_PROVIDER="dall-e-3"`).** <br> API-ключ от OpenAI. | `"sk-xxxxxxxxxxxxxxxx"` |
+| `OPENAI_MODEL`                        | **(Если `LLM="openai"`).** Модель OpenAI (например, `gpt-5`). | `"gpt-5"` |
+| `GOOGLE_API_KEY`                      | **(Если `LLM="google"` или `IMAGE_PROVIDER="gemini_flash"`).** <br> API-ключ от Google. | `"AIzaSyXXXXXXXXXXXX"` |
+| `GOOGLE_MODEL`                        | **(Если `LLM="google"`).** Модель Google. | `"models/gemini-1.5-pro"` |
+| `ANTHROPIC_API_KEY`                   | **(Если `LLM="anthropic"`).** API-ключ от Anthropic. | `"sk-ant-xxxxxxxxxxxx"` |
+| `ANTHROPIC_MODEL`                     | **(Если `LLM="anthropic"`).** Модель Anthropic. | `"claude-3-opus-20240229"` |
+| `OLLAMA_URL`                          | **(Если `LLM="ollama"`).** URL вашего локального сервера Ollama. | `"http://localhost:11434"` |
+| `OLLAMA_MODEL`                        | **(Если `LLM="ollama"`).** Модель Ollama. | `"llama3.2:3b"` |
 
-Укажите, какого провайдера и модель вы хотите использовать для генерации текста.
+###  🖼️ НАСТРОЙКИ ПРОВАЙДЕРА ИЗОБРАЖЕНИЙ 
+| Переменная                               | Описание                                                                                                                                   | Пример |
+|:-----------------------------------------|:-------------------------------------------------------------------------------------------------------------------------------------------| :--- |
+| `IMAGE_PROVIDER`                         | **Обязательно.** Выбор провайдера изображений. <br> *AI-модели: `Kandinsky`, `dall-e-3`, `gemini_flash`* <br> *Стоки: `pexels`, `pixabay`* | `"Kandinsky"` |
+| `KANDINSKY_API_KEY`                      | **(Если `IMAGE_PROVIDER="Kandinsky"`).** API-ключ от FusionBrain.                                                                          | `"your_kandinsky_api_key"` |
+| `KANDINSKY_SECRET_KEY`                   | **(Если `IMAGE_PROVIDER="Kandinsky"`).** Secret-ключ от FusionBrain.                                                                       | `"your_kandinsky_secret_key"` |
+| `PEXELS_API_KEY`                         | **(Если `IMAGE_PROVIDER="pexels"`).** API-ключ от Pexels.                                                                                  | `"vzXXXXXXXXXXXXXX"` |
+| `PIXABAY_API_KEY`                        | **(Если `IMAGE_PROVIDER="pixabay"`).** API-ключ от Pixabay.                                                                                | `"3883XXXXXXXXXXXXX"` |
+| `OPENAI_API_KEY`                         | *(Если `IMAGE_PROVIDER="dall-e-3"`). API-ключ от OpenAI. `OPENAI_API_KEY`*                                                                 | |
+| `GOOGLE_API_KEY`                         | *(Если `IMAGE_PROVIDER="gemini_flash"`). API-ключ от GOOGLE. `GOOGLE_API_KEY`*                                                             | |  
 
-**Пример для Ollama:**
-1. Скачайте модель через Ollama
-2. Укажите Ollama URL
-```env
-LLM="ollama"
-OLLAMA_URL="http://host.docker.internal:11434" 
-OLLAMA_MODEL="llama3:8b"
-```
-
-**Пример для стороннего OpenAI-совместимого API:**
-```env
-LLM="custom"
-CUSTOM_LLM_URL="https://api.example.com/v1"
-CUSTOM_LLM_API_KEY="your-api-key"
-CUSTOM_MODEL="model-name"
-```
-
-### 2. Настройка генерации изображений
-
-Выберите провайдера для генерации или подбора изображений и укажите соответствующий ключ API.
-
-**Пример для Kandinsky:**
-```env
-IMAGE_PROVIDER="Kandinsky"
-KANDINSKY_API_KEY="your-kandinsky-api-key"
-```
-
-**Пример для Pexels (стоковые фото):**
-```env
-IMAGE_PROVIDER="pexels"
-PEXELS_API_KEY="your-pexels-api-key"
-```
-
-**Pixabay**
-```env
-IMAGE_PROVIDER="pixabay"
-PIXABAY_API_KEY="your-pixabay-api-key"
-```
-
-### 3. Хранение данных
+### 📁 Хранение данных
 
 По умолчанию все данные (база данных, загруженные файлы, сгенерированные презентации) хранятся в директории `app_data` в корне проекта. Вы можете изменить этот путь, указав его в переменной `APP_DATA_DIRECTORY`.
 
