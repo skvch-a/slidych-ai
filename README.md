@@ -18,10 +18,12 @@
 ✅ **Новый шаблон** - добавлен шаблон в стиле корпорации "Росатом"
 
 <center>
-    <div><img src="readme_assets/1.png" style="width: 40%; height: auto; display: block; margin-bottom: 10px;"></div>
-    <div><img src="readme_assets/2.png" style="width: 40%; height: auto; display: block; margin-bottom: 10px;"></div>
-    <div><img src="readme_assets/3.png" style="width: 40%; height: auto; display: block; margin-bottom: 10px;"></div>
-    <div><img src="readme_assets/4.png" style="width: 40%; height: auto; display: block; margin-bottom: 10px;"></div>
+    <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;">
+        <img src="readme_assets/1.png" style="width: 42.4%; height: auto;">
+        <img src="readme_assets/2.png" style="width: 48%; height: auto;">
+        <img src="readme_assets/3.png" style="width: 48%; height: auto;">
+        <img src="readme_assets/4.png" style="width: 30%; height: auto;">
+    </div>
 </center>
 
 
